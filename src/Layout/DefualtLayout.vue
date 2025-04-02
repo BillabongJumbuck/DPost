@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Menu from '@/components/Menu.vue'
-import Header from '@/components/Header.vue'
+import Menu from '@/components/SideMenu.vue'
+import Header from '@/components/AppHeader.vue'
 </script>
 
 <template>
@@ -16,13 +16,4 @@ import Header from '@/components/Header.vue'
   </el-container>
 </template>
 <style scoped>
-/* 强制 Element 容器高度继承 */
-.el-container {
-  height: 100%;
-}
-/* 处理滚动条 */
-.el-main {
-  overflow: auto;
-  height: calc(100% - 60px); /* 根据 header/footer 高度调整 */
-}
 </style>

@@ -71,24 +71,6 @@ const handleClose = (key: string, keyPath: string[]) => {
   border-top: 1px solid var(--el-border-color);
 }
 
-.el-menu-item {
-  transition: all 0.3s; /* 过渡动画 */
-  position: relative; /* 为伪元素定位 */
-}
-.el-menu-item.is-active {
-  background: #f5f7fa !important; /* 灰色背景 */
-}
-
-.el-menu-item.is-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px; /* 左边框宽度 */
-  background: #409EFF; /* 蓝色边框 */
-  border-radius: 0 4px 4px 0; /* 右侧圆角 */
-}
 /* 折叠状态适配 */
 .el-menu--collapse .el-menu-item.is-active::before {
   left: -2px; /* 微调位置适应折叠状态 */

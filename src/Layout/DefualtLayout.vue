@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Menu from '@/components/SideMenu.vue'
-import Header from '@/components/AppHeader.vue'
-import AppFooter from '@/components/AppFooter.vue'
+import Menu from '@/components/App/SideMenu.vue'
+import Header from '@/components/App/AppHeader.vue'
+import AppFooter from '@/components/App/AppFooter.vue'
 </script>
 
 <template>

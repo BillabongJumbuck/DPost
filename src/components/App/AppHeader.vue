@@ -4,7 +4,7 @@
       <!-- 第一列 -->
       <div class="flex-1 h-full flex items-center ">
         <img width="48" height="48"
-          src="/logo.svg" alt="Logo">
+             src="/logo.svg" alt="Logo">
         <div class="font-sans text-indigo-950 text-4xl" style="padding-left: 10px">DPost</div>
       </div>
 

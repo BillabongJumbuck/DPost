@@ -5,7 +5,10 @@
       min-size="65"
       class="flex flex-col !overflow-auto"
     >
-      <Splitpanes class="smart-splitter">
+      <Splitpanes
+        class="smart-splitter"
+        :horizontal="horizontal"
+      >
         <Pane
           :size="65"
           class="flex flex-col !overflow-auto"
@@ -30,6 +33,13 @@
 import { Pane, Splitpanes } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 import { computed, useSlots } from "vue"
+
+const props = defineProps({
+  horizontal: {
+    type: Boolean,
+    default: false // 默认垂直布局
+  }
+})
 
 const slots = useSlots()
 const hasSecondary = computed(() => !!slots.secondary)

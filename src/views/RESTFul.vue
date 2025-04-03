@@ -9,9 +9,16 @@ export default defineComponent({
 </script>
 
 <template>
-  <MainLayout layout-id="http" class="h-full w-full p-0 m-0">
+  <MainLayout layout-id="rest" class="h-full w-full p-0 m-0" :horizontal="false">
     <template #primary>
-      <div>primary</div>
+      <MainLayout layout-id="rest-test" class="h-full w-full p-0 m-0" :horizontal="true">
+        <template #primary>
+          <div>Tab</div>
+        </template>
+        <template #secondary>
+          <div>Result</div>
+        </template>
+      </MainLayout>
     </template>
     <template #secondary>
       <div>secondary</div>

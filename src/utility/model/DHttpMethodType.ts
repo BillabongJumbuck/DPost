@@ -1,4 +1,4 @@
-export enum HttpMethod {
+export enum DHttpMethodType {
   GET = 'GET',
   POST = 'POST',
   PATCH = 'PATCH',

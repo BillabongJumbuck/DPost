@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import MainLayout from '@/Layout/MainLayout.vue'
+import RestRequest from '@/components/Rest/RestRequest.vue'
 
 export default defineComponent({
   name: 'RESTFul',
-  components: { MainLayout }
+  components: { RestRequest, MainLayout }
 })
 </script>
 
@@ -13,7 +14,7 @@ export default defineComponent({
     <template #primary>
       <MainLayout layout-id="rest-test" class="h-full w-full p-0 m-0" :horizontal="true">
         <template #primary>
-          <div>Tab</div>
+          <RestRequest/>
         </template>
         <template #secondary>
           <div>Result</div>
@@ -27,7 +28,5 @@ export default defineComponent({
 </template>
 
 <style scoped>
-* {
-  border: 1px black solid;
-}
+
 </style>

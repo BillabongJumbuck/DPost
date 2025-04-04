@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+
+import preset from "./ui-preset"
 module.exports = {
   content: [
     "./index.html",
@@ -8,4 +10,5 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  presets: [preset],
 }

@@ -5,7 +5,9 @@
       <div class="flex-1 h-full flex items-center ">
         <img width="48" height="48"
              src="/logo.svg" alt="Logo">
-        <div class="font-sans text-indigo-950 text-4xl" style="padding-left: 10px">DPost</div>
+        <div class="font-extrabold text-indigo-950 text-4xl truncate pl-5">
+          DPost
+        </div>
       </div>
 
       <!-- 第二列 -->
@@ -20,8 +22,10 @@
       <!-- 第三列 -->
       <div class="flex-1 h-full flex items-center justify-end ">
         <el-button type="success" plain>
-          <el-icon style="width: 24px; height: 24px"><UploadFilled /></el-icon>
-           保存我的工作区
+          <el-icon style="width: 24px; height: 24px">
+            <UploadFilled />
+          </el-icon>
+          保存我的工作区
         </el-button>
         <el-button type="primary" style="width: auto">登录</el-button>
       </div>

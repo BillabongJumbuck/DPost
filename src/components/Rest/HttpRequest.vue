@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Tippy } from 'vue-tippy'
 import { HoppSelectWrapper, HoppItem, HoppButtonPrimary, HoppButtonSecondary } from '@/components/Hopp'
 import type { DHttpRequestDoc } from '@/utility/model'
@@ -97,15 +97,36 @@ const methods = [
   "PUT",
   "PATCH",
   "DELETE",
-  "OPTIONS",
-  "CONNECT",
+  "OPTIONS"
 ]
 
-const urlInput = ref('')
+// 组件定义
+const emit = defineEmits<{
+  (e: "update:method", method: string): void
+  (e: "update:url", url: string): void
+}>()
 
+const urlInput = ref(props.tab.request.url) // 初始化URL值
+
+watch(
+  () => props.tab.request.url,
+  (newUrl) => {
+    urlInput.value = newUrl
+  },
+  { immediate: true }
+)
+
+// 方法实现
 const updateMethod = (method: string) => {
-  // tab.value.document.request.method = method
+  emit("update:method", method) // 通知父组件更新
 }
+
+
+
+watch(urlInput, (newUrl) => {
+  emit("update:url", newUrl) // URL变更同步
+})
+
 
 const onSelectMethod = (e: Event | any) => {
   // type any because of value property not being recognized by TS in the event.target object. It is a valid property though.

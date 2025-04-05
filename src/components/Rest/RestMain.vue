@@ -35,27 +35,33 @@
         </span>
       </template>
     </HoppWindow>
-    <RequestTab :tab="currentTab"></RequestTab>
+    <RequestTab
+      :tab="currentTab"
+      @update:method="handleMethodUpdate"
+      @update:url="handleUrlUpdate"
+    />
   </HoppWindows>
 </template>
 
 <script setup lang="ts">
 import { HoppWindow, HoppWindows } from '../Hopp'
 import HttpTabHead from '@/components/Rest/TabHead.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, computed, reactive } from 'vue'
 import { ReqDocs } from '@/test/ReqDocs.ts'
 import { DHttpRequest, type DHttpRequestDoc } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
+import { toDHttpMethod } from '@/utility/model/DHttpMethodType.ts'
 
 type tabType = DHttpRequestDoc;
 const tabs = ref<tabType[]>( ReqDocs );
 const selectedTabId = ref(tabs.value[0].id)
 
-// 获取当前选中标签页的ID
-const currentTabId = selectedTabId.value
-
 // 通过ID找到对应的tab对象
-const currentTab : tabType = tabs.value.find(tab => tab.id === currentTabId)!
+const currentTab = computed(() => {
+  const tab = tabs.value.find(t => t.id === selectedTabId.value)
+  if (!tab) throw new Error("当前标签页不存在")
+  return reactive(tab)
+})
 
 watch(selectedTabId, (newVal) => {
   const currentTab = tabs.value.find(tab => tab.id === newVal)
@@ -101,6 +107,18 @@ const sortTabs = (e: { oldIndex: number; newIndex: number }) => {
   const newTabs = [...tabs.value]
   newTabs.splice(e.newIndex, 0, newTabs.splice(e.oldIndex, 1)[0])
   tabs.value = newTabs
+}
+
+const handleMethodUpdate = (method: string) => {
+  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  targetTab.request.method =  toDHttpMethod(method)
+  targetTab.isDirty = true
+}
+
+const handleUrlUpdate = (url: string) => {
+  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  targetTab.request.url = url
+  targetTab.isDirty = true
 }
 </script>
 

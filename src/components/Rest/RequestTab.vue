@@ -1,7 +1,12 @@
 <template>
   <MainLayout layout-id="rest-primary" :horizontal="true">
     <template #primary>
-      <HttpRequest :tab="tab"/>
+      <HttpRequest
+        :key="tab.id"
+        :tab="tab"
+        @update:method="(method) => $emit('update:method', method)"
+        @update:url="(url) => $emit('update:url', url)"
+      />
       <RequestOptions></RequestOptions>
     </template>
     <template #secondary>
@@ -21,6 +26,8 @@ import RequestOptions from '@/components/Rest/RequestOptions.vue'
 const props = defineProps<{
   tab: DHttpRequestDoc
 }>()
+
+defineEmits(["update:method", "update:url"])
 </script>
 
 <style scoped>

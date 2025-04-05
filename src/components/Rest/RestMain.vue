@@ -1,6 +1,6 @@
 <template>
   <HoppWindows
-    v-model="selectedWindow"
+    v-model="selectedTabId"
     @add-tab="openNewTab"
     @remove-tab="removeTab"
     @sort="sortTabs"
@@ -35,23 +35,33 @@
         </span>
       </template>
     </HoppWindow>
-<!--    <RequestTab :tab="tab"></RequestTab>-->
+    <RequestTab :tab="currentTab"></RequestTab>
   </HoppWindows>
 </template>
 
 <script setup lang="ts">
 import { HoppWindow, HoppWindows } from '../Hopp'
 import HttpTabHead from '@/components/Rest/TabHead.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { ReqDocs } from '@/test/ReqDocs.ts'
 import { DHttpRequest, type DHttpRequestDoc } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
 
-const selectedWindow = ref('window1')
-
 type tabType = DHttpRequestDoc;
 const tabs = ref<tabType[]>( ReqDocs );
+const selectedTabId = ref(tabs.value[0].id)
 
+// 获取当前选中标签页的ID
+const currentTabId = selectedTabId.value
+
+// 通过ID找到对应的tab对象
+const currentTab : tabType = tabs.value.find(tab => tab.id === currentTabId)!
+
+watch(selectedTabId, (newVal) => {
+  const currentTab = tabs.value.find(tab => tab.id === newVal)
+  console.log('当前选中标签页变化为:', currentTab)
+  // 这里可以触发请求加载等操作
+})
 
 const openNewTab = () => {
   const newTab : tabType = {
@@ -65,11 +75,26 @@ const openNewTab = () => {
     isDirty: false
   }
   tabs.value = [...tabs.value, { ...newTab }]
-  selectedWindow.value = newTab.id
+  selectedTabId.value = newTab.id
 }
 
 const removeTab = (tabID: string) => {
-  tabs.value = tabs.value.filter((tab) => tab.id !== tabID)
+  // 过滤要关闭的标签页
+  tabs.value = tabs.value.filter(tab => {
+    const isClosingCurrent = tab.id === tabID && tab.id === selectedTabId.value
+
+    if (isClosingCurrent) {
+      // 智能选择新选中的标签页（优先前一个，否则后一个）
+      const closedIndex = tabs.value.findIndex(t => t.id === tabID)
+      const newSelected =
+        tabs.value[closedIndex - 1] ||
+        tabs.value[closedIndex + 1]
+
+      selectedTabId.value = newSelected.id
+    }
+
+    return tab.id !== tabID
+  })
 }
 
 const sortTabs = (e: { oldIndex: number; newIndex: number }) => {

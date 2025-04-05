@@ -2,12 +2,7 @@
   <MainLayout layout-id="rest-primary" :horizontal="true">
     <template #primary>
       <HttpRequest :tab="tab"/>
-      <div>请求体内容</div>
-<!--      <HttpRequestOptions-->
-<!--        v-model="tab.document.request"-->
-<!--        v-model:option-tab="tab.document.optionTabPreference"-->
-<!--        v-model:inherited-properties="tab.document.inheritedProperties"-->
-<!--      />-->
+      <RequestOptions></RequestOptions>
     </template>
     <template #secondary>
 <!--      <HttpResponse v-model:document="tab.document" :is-embed="false" />-->
@@ -20,6 +15,7 @@
 import MainLayout from '@/Layout/MainLayout.vue'
 import type { DHttpRequestDoc } from '@/utility/model'
 import HttpRequest from '@/components/Rest/HttpRequest.vue'
+import RequestOptions from '@/components/Rest/RequestOptions.vue'
 
 
 const props = defineProps<{

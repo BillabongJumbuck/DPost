@@ -18,7 +18,7 @@
                 id="method"
                 class="flex w-26 cursor-pointer rounded-l bg-primaryLight px-4 py-2 font-semibold text-secondaryDark transition"
                 :value="tab.request.method"
-                :readonly="false"
+                :readonly="true"
                 :placeholder="'请求方法'"
                 @input="onSelectMethod($event)"
               />
@@ -49,16 +49,45 @@
           </tippy>
         </label>
       </div>
+      <div
+        class="flex flex-1 whitespace-nowrap rounded-r border-l border-divider bg-primaryLight transition"
+      >
+        <el-input v-model="urlInput" class="w-full h-full border-0 color-inherit" />
+      </div>
+    </div>
+    <div class="mt-2 flex sm:mt-0">
+      <HoppButtonPrimary
+        id="send"
+        v-tippy="{ theme: 'tooltip', delay: [500, 20], allowHTML: true }"
+        :title="'发送'"
+        :label="`${
+          !isTabResponseLoading ? '发送' : '取消'
+        }`"
+        class="min-w-[5rem] flex-1"
+        @click="!isTabResponseLoading ? newSendRequest() : cancelRequest()"
+      />
+      <span class="ml-2 flex rounded border border-divider transition">
+        <HoppButtonSecondary
+          v-tippy="{ theme: 'tooltip', delay: [500, 20], allowHTML: true }"
+          :title="'保存'"
+          :label="'保存'"
+          filled
+          :icon="IconSave"
+          class="flex-1 rounded rounded-r-none"
+          @click="saveRequest()"
+        />
+      </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
+import { ref } from 'vue'
 import { Tippy } from 'vue-tippy'
-import { HoppSelectWrapper, HoppItem } from '@/components/Hopp'
+import { HoppSelectWrapper, HoppItem, HoppButtonPrimary, HoppButtonSecondary } from '@/components/Hopp'
 import type { DHttpRequestDoc } from '@/utility/model'
 import { getMethodLabelColor } from "@/utility/helper/labelColoring.ts"
+import { SaveIcon as IconSave } from 'lucide-vue-next'
 
 const props = defineProps<{ tab: DHttpRequestDoc }>()
 
@@ -72,6 +101,8 @@ const methods = [
   "CONNECT",
 ]
 
+const urlInput = ref('')
+
 const updateMethod = (method: string) => {
   // tab.value.document.request.method = method
 }
@@ -79,5 +110,19 @@ const updateMethod = (method: string) => {
 const onSelectMethod = (e: Event | any) => {
   // type any because of value property not being recognized by TS in the event.target object. It is a valid property though.
   updateMethod(e.target.value)
+}
+
+let isTabResponseLoading = false
+
+const newSendRequest = async () => {
+  isTabResponseLoading = true
+}
+
+const cancelRequest = () => {
+  isTabResponseLoading = false
+}
+
+const saveRequest = () => {
+
 }
 </script>

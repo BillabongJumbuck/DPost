@@ -1,25 +1,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import MainLayout from '@/Layout/MainLayout.vue'
-import RestRequest from '@/components/Rest/RestRequest.vue'
+import RestMain from '@/components/Rest/RestMain.vue'
 
 export default defineComponent({
   name: 'RESTFul',
-  components: { RestRequest, MainLayout }
+  components: { RestMain, MainLayout }
 })
 </script>
 
 <template>
   <MainLayout layout-id="rest" class="h-full w-full p-0 m-0" :horizontal="false">
     <template #primary>
-      <MainLayout layout-id="rest-test" class="h-full w-full p-0 m-0" :horizontal="true">
-        <template #primary>
-          <RestRequest/>
-        </template>
-        <template #secondary>
-          <div>Result</div>
-        </template>
-      </MainLayout>
+      <RestMain class="h-full w-full p-0 m-0"/>
     </template>
     <template #secondary>
       <div>secondary</div>

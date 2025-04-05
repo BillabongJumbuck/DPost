@@ -35,6 +35,7 @@
         </span>
       </template>
     </HoppWindow>
+<!--    <RequestTab :tab="tab"></RequestTab>-->
   </HoppWindows>
 </template>
 
@@ -44,6 +45,7 @@ import HttpTabHead from '@/components/Rest/TabHead.vue'
 import { ref } from 'vue'
 import { ReqDocs } from '@/test/ReqDocs.ts'
 import { DHttpRequest, type DHttpRequestDoc } from '@/utility/model'
+import RequestTab from '@/components/Rest/RequestTab.vue'
 
 const selectedWindow = ref('window1')
 

@@ -8,7 +8,9 @@
       <HttpParams></HttpParams>
     </HoppTab>
     <HoppTab id="'bodyParams'" label="请求体">请求体</HoppTab>
-    <HoppTab id="'headers'" label="请求头">请求头</HoppTab>
+    <HoppTab id="'headers'" label="请求头">
+      <HttpHeaders></HttpHeaders>
+    </HoppTab>
   </HoppTabs>
 </template>
 
@@ -16,13 +18,7 @@
 import { HoppTabs, HoppTab } from '@/components/Hopp'
 import { ref } from 'vue'
 import HttpParams from '@/components/Rest/HttpParams.vue'
-
-const VALID_OPTION_TABS = [
-  "params",
-  "bodyParams",
-  "headers",
-] as const
-
+import HttpHeaders from '@/components/Rest/HttpHeaders.vue'
 const selectedOptionTab = ref<"params" | "bodyParams" | "headers" >("params")
 </script>
 

@@ -38,7 +38,7 @@
     />
     <input
       :value="description"
-      :placeholder="'参数描述'"
+      :placeholder="'Description'"
       class="flex flex-1 px-4 bg-transparent"
       type="text"
       :class="{ 'opacity-50': !entityActive }"

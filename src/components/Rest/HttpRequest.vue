@@ -128,19 +128,19 @@ watch(urlInput, (newUrl) => {
 })
 
 
-const onSelectMethod = (e: Event | any) => {
-  // type any because of value property not being recognized by TS in the event.target object. It is a valid property though.
-  updateMethod(e.target.value)
+const onSelectMethod = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  updateMethod(target.value)
 }
 
-let isTabResponseLoading = false
+const isTabResponseLoading = ref(false)
 
 const newSendRequest = async () => {
-  isTabResponseLoading = true
+  isTabResponseLoading.value = true
 }
 
 const cancelRequest = () => {
-  isTabResponseLoading = false
+  isTabResponseLoading.value = false
 }
 
 const saveRequest = () => {

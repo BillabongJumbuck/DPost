@@ -1,5 +1,5 @@
 // 导出枚举类型
-export { DHttpMethodType } from './DHttpMethodType'
+export { DHttpMethodType, toDHttpMethod } from './DHttpMethodType'
 // 导出请求相关类型
 export { DHttpRequest } from './DHttpRequest'
 export type { DHttpRequestDoc } from './DHttpRequestDoc'

@@ -5,8 +5,7 @@
     :blank="blank"
     class="inline-flex items-center justify-center font-semibold transition whitespace-nowrap focus:outline-none"
     :class="[
-      color
-        ? `text-${color}-500 hover:text-${color}-600 focus-visible:text-${color}-600`
+      color && isValidColor(color) ? colorClasses[color]
         : 'text-secondary hover:text-secondaryDark focus-visible:text-secondaryDark',
       { 'pointer-events-none': loading },
       label ? 'rounded px-4 py-2' : 'p-2',
@@ -69,7 +68,7 @@ interface Props {
   label?: string
   icon?: object | null | Component // It is a component!
   svg?: object | null | Component // It is a component!
-  color?: string
+  color?: 'red' | 'blue' | 'green'
   disabled?: boolean
   loading?: boolean
   reverse?: boolean
@@ -86,7 +85,7 @@ withDefaults(defineProps<Props>(), {
   label: "",
   icon: null,
   svg: null,
-  color: "",
+  color: undefined,
   disabled: false,
   loading: false,
   reverse: false,
@@ -96,4 +95,16 @@ withDefaults(defineProps<Props>(), {
   shortcut: () => [],
   filled: false,
 })
+
+const colorClasses = {
+  red: 'text-red-500 hover:text-red-600 focus-visible:text-red-600',
+  blue: 'text-blue-500 hover:text-blue-600 focus-visible:text-blue-600',
+  green: 'text-green-500 hover:text-green-600 focus-visible:text-green-600'
+} as const
+
+type ValidColor = keyof typeof colorClasses
+
+const isValidColor = (color: string): color is ValidColor => {
+  return color in colorClasses
+}
 </script>

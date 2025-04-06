@@ -23,7 +23,7 @@ import HttpRequest from '@/components/Rest/HttpRequest.vue'
 import RequestOptions from '@/components/Rest/RequestOptions.vue'
 
 
-const props = defineProps<{
+defineProps<{
   tab: DHttpRequestDoc
 }>()
 

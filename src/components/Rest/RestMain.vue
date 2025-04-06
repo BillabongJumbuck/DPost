@@ -44,13 +44,12 @@
 </template>
 
 <script setup lang="ts">
-import { HoppWindow, HoppWindows } from '../Hopp'
+import { HoppWindow, HoppWindows } from '@/components/Hopp'
 import HttpTabHead from '@/components/Rest/TabHead.vue'
 import { ref, watch, computed, reactive } from 'vue'
 import { ReqDocs } from '@/test/ReqDocs.ts'
-import { DHttpRequest, type DHttpRequestDoc } from '@/utility/model'
+import { DHttpRequest, type DHttpRequestDoc, toDHttpMethod } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
-import { toDHttpMethod } from '@/utility/model/DHttpMethodType.ts'
 
 type tabType = DHttpRequestDoc;
 const tabs = ref<tabType[]>( ReqDocs );
@@ -66,7 +65,6 @@ const currentTab = computed(() => {
 watch(selectedTabId, (newVal) => {
   const currentTab = tabs.value.find(tab => tab.id === newVal)
   console.log('当前选中标签页变化为:', currentTab)
-  // 这里可以触发请求加载等操作
 })
 
 const openNewTab = () => {

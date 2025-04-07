@@ -10,7 +10,8 @@
       <RequestOptions
         :key="tab.id"
         :tab="tab"
-        @update:params="(params:DHttpKeyValueDoc[]) => $emit('update:params', params)"
+        @update:params="(params) => $emit('update:params', params)"
+        @update:headers="(headers) => $emit('update:headers', headers)"
       />
     </template>
     <template #secondary>
@@ -35,6 +36,7 @@ defineEmits<{
   (e: 'update:method', method: string): void
   (e: 'update:url', url: string): void
   (e: 'update:params', params: DHttpKeyValueDoc[]): void
+  (e: 'update:headers', headers: DHttpKeyValueDoc[]): void
 }>()
 </script>
 

@@ -24,7 +24,7 @@
     </div>
     <div>
       <draggable
-        v-model="workingParams"
+        v-model="workingHeaders"
         item-key="id"
         animation="250"
         handle=".draggable-handle"
@@ -34,15 +34,24 @@
         drag-class="cursor-grabbing"
       >
         <template #item="{ element: param, index }">
-          <HttpKeyValue :total="workingParams.length" :index="index" :entity-id=param.id
-                        :entity-active="param.active" :is-active="true" v-model:name="param.key"
-                        v-model:value="param.value" v-model:description="param.description">
-
+          <HttpKeyValue
+            :total="workingHeaders.length"
+            :index="index"
+            :entity-id=param.id
+            v-model:entity-active="param.active"
+            v-model:name="param.key"
+            v-model:value="param.value"
+            v-model:description="param.description"
+            @delete="handleDeleteHeader(index)"
+            @update:key="val => updateHeaderKey(index, val)"
+            @update:value="val => updateHeaderValue(index, val)"
+            @update:description="val => updateHeaderDescription(index, val)"
+            @update:entityActive="val => updateHeaderActive(index, val)">
           </HttpKeyValue>
         </template>
       </draggable>
       <HoppPlaceholder
-        v-if="workingParams.length === 0"
+        v-if="workingHeaders.length === 0"
         :src="`/images/add_category.svg`"
         :alt="'该请求没有任何请求头'"
         :text="'该请求没有任何请求头'"
@@ -65,20 +74,20 @@ import { PlusIcon as IconPlus, Trash2Icon as IconTrash2 } from 'lucide-vue-next'
 import { HoppButtonSecondary, HoppPlaceholder } from '@/components/Hopp'
 import HttpKeyValue from '@/components/Rest/KeyValue.vue'
 import draggable from 'vuedraggable-es'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { DHttpKeyValueDoc } from '@/utility/model'
+
+const props = defineProps<{
+  modelValue: DHttpKeyValueDoc[]
+}>()
 
 const idTicker = ref(0)
 
-type tempHttpParam = {
-  key: string,
-  value: string,
-  active: boolean,
-  description: ''
-}
+type WorkingHeader = DHttpKeyValueDoc;
 
-const workingParams = ref<Array<tempHttpParam & { id: number }>>([
+const workingHeaders = ref<WorkingHeader[]>([
   {
-    id: idTicker.value++,
+    id: (idTicker.value++).toString(),
     key: '',
     value: '',
     active: true,
@@ -87,8 +96,8 @@ const workingParams = ref<Array<tempHttpParam & { id: number }>>([
 ])
 
 const addParam = () => {
-  workingParams.value.push({
-    id: idTicker.value++,
+  workingHeaders.value.push({
+    id: (idTicker.value++).toString(),
     key: '',
     value: '',
     active: true,
@@ -96,9 +105,60 @@ const addParam = () => {
   })
 }
 
+const emit = defineEmits<{
+  (e: 'update:headers', headers: DHttpKeyValueDoc[]): void
+}>()
+
 const clearContent = () => {
-  workingParams.value = []
+  workingHeaders.value = []
+  emit('update:headers', [])
 }
+
+watch(() => props.modelValue, (newVal) => {
+  // 父组件同步
+  const existingIds = new Set(workingHeaders.value.map(p => p.id))
+
+  workingHeaders.value = [
+    ...workingHeaders.value.filter(p => newVal.some(np => np.key === p.key)),
+    ...newVal.filter(np => !existingIds.has(np.id))
+  ]
+}, { deep: true, immediate: true })
+
+const updateHeaderKey = (index: number, value: string) => {
+  if (index >= 0 && index < workingHeaders.value.length) {
+    workingHeaders.value[index].key = value
+  }
+  emit("update:headers", workingHeaders.value)
+}
+
+const updateHeaderValue = (index: number, value: string) => {
+  if (index >= 0 && index < workingHeaders.value.length) {
+    workingHeaders.value[index].value = value
+  }
+  emit("update:headers", workingHeaders.value)
+}
+
+const updateHeaderDescription = (index: number, value: string) => {
+  if (index >= 0 && index < workingHeaders.value.length) {
+    workingHeaders.value[index].description = value
+  }
+  emit("update:headers", workingHeaders.value)
+}
+
+const updateHeaderActive = (index: number, value: boolean) => {
+  if (index >= 0 && index < workingHeaders.value.length) {
+    workingHeaders.value[index].active = value
+  }
+  emit("update:headers", workingHeaders.value)
+}
+
+const handleDeleteHeader= (index: number) => {
+  if (index >= 0 && index < workingHeaders.value.length) {
+    workingHeaders.value.splice(index, 1)
+  }
+  emit("update:headers", workingHeaders.value)
+}
+
 </script>
 
 <style scoped>

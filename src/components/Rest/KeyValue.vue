@@ -101,7 +101,6 @@ const isActive = ref(props.entityActive)
 
 </script>
 
-
 <style scoped>
 
 </style>

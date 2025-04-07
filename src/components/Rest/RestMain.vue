@@ -40,6 +40,7 @@
       @update:method="handleMethodUpdate"
       @update:url="handleUrlUpdate"
       @update:params="handleQueryParamsUpdate"
+      @update:headers="handleHeadersUpdate"
     />
   </HoppWindows>
 </template>
@@ -128,6 +129,12 @@ const handleUrlUpdate = (url: string) => {
 const handleQueryParamsUpdate = (params: DHttpKeyValueDoc[]) => {
   const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
   targetTab.queryParams = params
+  targetTab.isDirty = true
+}
+
+const handleHeadersUpdate = (headers: DHttpKeyValueDoc[]) => {
+  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  targetTab.headers = headers
   targetTab.isDirty = true
 }
 </script>

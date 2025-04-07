@@ -45,7 +45,7 @@
             @update:key="val => updateParamKey(index, val)"
             @update:value="val => updateParamValue(index, val)"
             @update:description="val => updateParamDescription(index, val)"
-            @update:entityActive="val => updateParamActive(index, 'active', val)">
+            @update:entityActive="val => updateParamActive(index, val)">
           </HttpKeyValue>
         </template>
       </draggable>
@@ -104,14 +104,14 @@ const addParam = () => {
   })
 }
 
+const emit = defineEmits<{
+  (e: 'update:params', params: DHttpKeyValueDoc[]): void
+}>()
+
 const clearContent = () => {
   workingParams.value = []
   emit('update:params', [])
 }
-
-const emit = defineEmits<{
-  (e: 'update:params', params: DHttpKeyValueDoc[]): void
-}>()
 
 watch(() => props.modelValue, (newVal) => {
   // 父组件同步
@@ -123,22 +123,18 @@ watch(() => props.modelValue, (newVal) => {
   ]
 }, { deep: true, immediate: true })
 
-
-watch(workingParams, (newVal) => {
-  // 数据变化时回传父组件（去除临时id）
-  emit('update:params', newVal)
-}, { deep: true })
-
 const updateParamKey = (index: number, value: string) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].key = value
   }
+  emit("update:params", workingParams.value)
 }
 
 const updateParamValue = (index: number, value: string) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].value = value
   }
+  emit("update:params", workingParams.value)
 }
 
 const updateParamDescription = (index: number, value: string) => {

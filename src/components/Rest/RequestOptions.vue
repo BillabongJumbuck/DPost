@@ -3,17 +3,19 @@
     v-model="selectedOptionTab"
     styles="sticky overflow-x-auto flex-shrink-0 bg-primary top-upperMobilePrimaryStickyFold sm:top-upperPrimaryStickyFold z-10"
     render-inactive-tabs
-    activeTabID="params"
   >
     <HoppTab id="params" label="参数" >
       <HttpParams
         :model-value="tab.queryParams"
-        @update:params="(params:DHttpKeyValueDoc[]) => $emit('update:params', params)"
+        @update:params="(params) => $emit('update:params', params)"
       />
     </HoppTab>
     <HoppTab id="bodyParams" label="请求体">请求体</HoppTab>
     <HoppTab id="headers" label="请求头">
-      <HttpHeaders></HttpHeaders>
+      <HttpHeaders
+        :model-value="tab.headers"
+        @update:headers="(headers) => $emit('update:headers', headers)"
+      />
     </HoppTab>
   </HoppTabs>
 </template>
@@ -33,6 +35,7 @@ defineProps<{
 
 defineEmits<{
   (e: 'update:params', params: DHttpKeyValueDoc[]): void
+  (e: 'update:headers', headers: DHttpKeyValueDoc[]): void
 }>()
 </script>
 

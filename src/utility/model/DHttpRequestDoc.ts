@@ -1,5 +1,6 @@
-import { DHttpRequest } from '@/utility/model/DHttpRequest.ts'
 import type { DHttpResponse } from '@/utility/model/DHttpResponse.ts'
+import type { DHttpMethodType } from '@/utility/model/DHttpMethodType.ts'
+import type { DHttpKeyValueDoc } from '@/utility/model/DHttpKeyValueDoc.ts'
 
 export type DHttpRequestDoc = {
   /**
@@ -8,32 +9,38 @@ export type DHttpRequestDoc = {
   id: string
 
   /**
-   * The document type
-   */
-  type: "request"
-
-  /**
    * The document name
    */
-  name: string | "Untitled"
-
-  /**
-   * The request as it is in the document
-   */
-  request: DHttpRequest
+  name: string;
 
   /**
    * Whether the request has any unsaved changes
    * (atleast as far as we can say)
    */
-  isDirty: boolean | false;
+  isDirty: boolean | false
 
   /**
-   * Info about where this request should be saved.
-   * This contains where the request is originated from basically.
+   * 请求 URL (包含协议和路径)
+   * @example "https://api.example.com/v1/users"
    */
-  // saveContext?: HoppRESTSaveContext
-
+  url: string;
+  /**
+   * HTTP 请求方法
+   * @default 'GET'
+   */
+  method: DHttpMethodType | DHttpMethodType.GET;
+  /**
+   * 查询参数 (键值对格式)
+   */
+  queryParams: DHttpKeyValueDoc[];
+  /**
+   * 请求头 (键值对格式)
+   */
+  body: string;
+  /**
+   * 请求体
+   */
+  headers: DHttpKeyValueDoc[];
   /**
    * The response as it is in the document
    * (if any)

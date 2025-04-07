@@ -24,8 +24,7 @@
       :placeholder="'key'"
       :auto-complete-source="keyAutoCompleteSource"
       :auto-complete-env="true"
-      @update:model-value="() => { }"
-      @change="() => { }"
+      @update:model-value="(val) => emit('update:name', val)"
     />
     <Hoppinput
       :class="{ 'opacity-50': !entityActive }"
@@ -33,37 +32,23 @@
       :placeholder="'value'"
       :auto-complete-source="keyAutoCompleteSource"
       :auto-complete-env="true"
-      @update:model-value="() => { }"
-      @change="() => { }"
+      @update:model-value="(val) => emit('update:value', val)"
     />
     <input
-      :value="description"
+      :model-value="description"
       :placeholder="'Description'"
       class="flex flex-1 px-4 bg-transparent"
       type="text"
       :class="{ 'opacity-50': !entityActive }"
-      @update:value="() => { }"
-      @input="() => { }"
+      @input="(e) => emit('update:description', (e.target as HTMLInputElement).value)"
     />
     <span>
       <HoppButtonSecondary
         v-tippy="{ theme: 'tooltip' }"
-        :title="
-          isActive
-            ? entityActive
-              ? '关闭'
-              : '开启'
-            : '关闭'
-        "
-        :icon="
-          isActive
-            ? entityActive
-              ? IconCheckCircle
-              : IconCircle
-            : IconCheckCircle
-        "
+        :title="entityActive ? '关闭' : '开启'"
+        :icon="entityActive ? IconCheckCircle : IconCircle"
         color="green"
-        @click="() => { entityActive = !entityActive }"
+        @click="emit('update:entityActive', !entityActive)"
       />
     </span>
     <span>
@@ -89,17 +74,22 @@ import { TrashIcon as IconTrash } from 'lucide-vue-next'
 defineProps<{
   total: number
   index: number
-  entityId: number
-  isActive: boolean
-  entityActive: boolean
   name: string
   value: string
   description: string
+  entityActive: boolean
   keyAutoCompleteSource?: string[]
 }>()
 
+const emit = defineEmits<{
+  (e: 'delete', index: number): void
+  (e: 'update:name', val: string): void
+  (e: 'update:value', val: string): void
+  (e: 'update:description', val: string): void
+  (e: 'update:entityActive', val: boolean): void
+}>()
 const deleteEntity = (index: number) => {
-
+  emit('delete', index)
 }
 </script>
 

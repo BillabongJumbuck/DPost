@@ -1,13 +1,17 @@
 <template>
   <MainLayout layout-id="rest-primary" :horizontal="true">
     <template #primary>
-      <HttpRequest
+      <HttpMethodAndUrl
         :key="tab.id"
         :tab="tab"
         @update:method="(method) => $emit('update:method', method)"
         @update:url="(url) => $emit('update:url', url)"
       />
-      <RequestOptions></RequestOptions>
+      <RequestOptions
+        :key="tab.id"
+        :tab="tab"
+        @update:params="(params:DHttpKeyValueDoc[]) => $emit('update:params', params)"
+      />
     </template>
     <template #secondary>
 <!--      <HttpResponse v-model:document="tab.document" :is-embed="false" />-->
@@ -18,8 +22,8 @@
 
 <script setup lang="ts">
 import MainLayout from '@/Layout/MainLayout.vue'
-import type { DHttpRequestDoc } from '@/utility/model'
-import HttpRequest from '@/components/Rest/HttpRequest.vue'
+import type { DHttpKeyValueDoc, DHttpRequestDoc } from '@/utility/model'
+import HttpMethodAndUrl from '@/components/Rest/HttpMethodAndUrl.vue'
 import RequestOptions from '@/components/Rest/RequestOptions.vue'
 
 
@@ -27,7 +31,11 @@ defineProps<{
   tab: DHttpRequestDoc
 }>()
 
-defineEmits(["update:method", "update:url"])
+defineEmits<{
+  (e: 'update:method', method: string): void
+  (e: 'update:url', url: string): void
+  (e: 'update:params', params: DHttpKeyValueDoc[]): void
+}>()
 </script>
 
 <style scoped>

@@ -41,8 +41,7 @@ const props = defineProps<{
 const tabState = computed(() => {
   return {
     name: props.tab.name,
-    method: props.tab.request.method,
-    request: props.tab.request,
+    method: props.tab.method,
   }
 })
 

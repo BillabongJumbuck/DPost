@@ -17,7 +17,7 @@
               <input
                 id="method"
                 class="flex w-26 cursor-pointer rounded-l bg-primaryLight px-4 py-2 font-semibold text-secondaryDark transition"
-                :value="tab.request.method"
+                :value="tab.method"
                 :readonly="true"
                 :placeholder="'请求方法'"
                 @input="onSelectMethod($event)"
@@ -106,10 +106,10 @@ const emit = defineEmits<{
   (e: "update:url", url: string): void
 }>()
 
-const urlInput = ref(props.tab.request.url) // 初始化URL值
+const urlInput = ref(props.tab.url) // 初始化URL值
 
 watch(
-  () => props.tab.request.url,
+  () => props.tab.url,
   (newUrl) => {
     urlInput.value = newUrl
   },
@@ -121,12 +121,9 @@ const updateMethod = (method: string) => {
   emit("update:method", method) // 通知父组件更新
 }
 
-
-
 watch(urlInput, (newUrl) => {
   emit("update:url", newUrl) // URL变更同步
 })
-
 
 const onSelectMethod = (e: Event) => {
   const target = e.target as HTMLInputElement

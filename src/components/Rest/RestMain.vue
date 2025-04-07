@@ -39,6 +39,7 @@
       :tab="currentTab"
       @update:method="handleMethodUpdate"
       @update:url="handleUrlUpdate"
+      @update:params="handleQueryParamsUpdate"
     />
   </HoppWindows>
 </template>
@@ -46,9 +47,14 @@
 <script setup lang="ts">
 import { HoppWindow, HoppWindows } from '@/components/Hopp'
 import HttpTabHead from '@/components/Rest/TabHead.vue'
-import { ref, watch, computed, reactive } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { ReqDocs } from '@/test/ReqDocs.ts'
-import { DHttpRequest, type DHttpRequestDoc, toDHttpMethod } from '@/utility/model'
+import {
+  type DHttpKeyValueDoc,
+  DHttpMethodType,
+  type DHttpRequestDoc,
+  toDHttpMethod
+} from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
 
 type tabType = DHttpRequestDoc;
@@ -70,13 +76,13 @@ watch(selectedTabId, (newVal) => {
 const openNewTab = () => {
   const newTab : tabType = {
     id: Date.now().toString(),
-    type: "request",
     name: "获取用户列表",
-    request: new DHttpRequest({
-      url: "https://api.example.com/users",
-      queryParams: { page: "1" }
-    }),
-    isDirty: false
+    isDirty: false,
+    url: "https://api.example.com/users",
+    method: DHttpMethodType.GET,
+    body: '',
+    headers: [],
+    queryParams: [],
   }
   tabs.value = [...tabs.value, { ...newTab }]
   selectedTabId.value = newTab.id
@@ -109,13 +115,19 @@ const sortTabs = (e: { oldIndex: number; newIndex: number }) => {
 
 const handleMethodUpdate = (method: string) => {
   const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
-  targetTab.request.method =  toDHttpMethod(method)
+  targetTab.method =  toDHttpMethod(method)
   targetTab.isDirty = true
 }
 
 const handleUrlUpdate = (url: string) => {
   const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
-  targetTab.request.url = url
+  targetTab.url = url
+  targetTab.isDirty = true
+}
+
+const handleQueryParamsUpdate = (params: DHttpKeyValueDoc[]) => {
+  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  targetTab.queryParams = params
   targetTab.isDirty = true
 }
 </script>

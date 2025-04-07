@@ -34,9 +34,8 @@
       >
         <template #item="{ element: param, index }">
           <HttpKeyValue :total="workingParams.length" :index="index" :entity-id=param.id
-                        :entity-active="param.active" :is-active="true" v-model:name="param.key"
+                        v-model:entity-active="param.active" v-model:name="param.key"
                         v-model:value="param.value" v-model:description="param.description">
-
           </HttpKeyValue>
         </template>
       </draggable>
@@ -64,20 +63,20 @@ import { HoppButtonSecondary, HoppPlaceholder } from '@/components/Hopp'
 import draggable from 'vuedraggable-es'
 import { PlusIcon as IconPlus, Trash2Icon as IconTrash2 } from 'lucide-vue-next'
 import HttpKeyValue from './KeyValue.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { DHttpKeyValueDoc } from '@/utility/model'
+
+const props = defineProps<{
+  modelValue: DHttpKeyValueDoc[]
+}>()
 
 const idTicker = ref(0)
 
-type tempHttpParam = {
-  key: string,
-  value: string,
-  active: boolean,
-  description: ''
-}
+type WorkingParam = DHttpKeyValueDoc;
 
-const workingParams = ref<Array<tempHttpParam & { id: number }>>([
+const workingParams = ref<WorkingParam[]>([
   {
-    id: idTicker.value++,
+    id: (idTicker.value++).toString(),
     key: '',
     value: '',
     active: true,
@@ -87,7 +86,7 @@ const workingParams = ref<Array<tempHttpParam & { id: number }>>([
 
 const addParam = () => {
   workingParams.value.push({
-    id: idTicker.value++,
+    id: (idTicker.value++).toString(),
     key: '',
     value: '',
     active: true,
@@ -98,6 +97,20 @@ const addParam = () => {
 const clearContent = () => {
   workingParams.value = []
 }
+
+const emit = defineEmits<{
+  (e: 'update:params', params: DHttpKeyValueDoc[]): void
+}>()
+
+watch(() => props.modelValue, (newVal) => {
+  // 当父组件数据变化时，同步到本地并补充id
+  workingParams.value = newVal
+}, { immediate: true })
+
+watch(workingParams, (newVal) => {
+  // 数据变化时回传父组件（去除临时id）
+  emit('update:params', newVal)
+}, { deep: true })
 
 </script>
 

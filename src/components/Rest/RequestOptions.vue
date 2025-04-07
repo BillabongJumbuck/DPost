@@ -5,7 +5,10 @@
     render-inactive-tabs
   >
     <HoppTab id="'params'" label="参数">
-      <HttpParams></HttpParams>
+      <HttpParams
+        :model-value="tab.queryParams"
+        @update:params="(params:DHttpKeyValueDoc[]) => $emit('update:params', params)"
+      />
     </HoppTab>
     <HoppTab id="'bodyParams'" label="请求体">请求体</HoppTab>
     <HoppTab id="'headers'" label="请求头">
@@ -15,13 +18,22 @@
 </template>
 
 <script setup lang="ts">
-import { HoppTabs, HoppTab } from '@/components/Hopp'
+import { HoppTab, HoppTabs } from '@/components/Hopp'
 import { ref } from 'vue'
-import HttpParams from '@/components/Rest/HttpParams.vue'
 import HttpHeaders from '@/components/Rest/HttpHeaders.vue'
-const selectedOptionTab = ref<"params" | "bodyParams" | "headers" >("params")
-</script>
+import type { DHttpKeyValueDoc, DHttpRequestDoc } from '@/utility/model'
+import HttpParams from '@/components/Rest/HttpParams.vue'
 
+const selectedOptionTab = ref<'params' | 'bodyParams' | 'headers'>('params')
+
+defineProps<{
+  tab: DHttpRequestDoc
+}>()
+
+defineEmits<{
+  (e: 'update:params', params: DHttpKeyValueDoc[]): void
+}>()
+</script>
 
 <style scoped>
 

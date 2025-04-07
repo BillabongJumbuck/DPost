@@ -34,7 +34,7 @@ import { Pane, Splitpanes } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 import { computed, useSlots } from "vue"
 
-const props = defineProps({
+defineProps({
   horizontal: {
     type: Boolean,
     default: false // 默认垂直布局

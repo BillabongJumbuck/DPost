@@ -24,7 +24,7 @@
       :placeholder="'key'"
       :auto-complete-source="keyAutoCompleteSource"
       :auto-complete-env="true"
-      @update:model-value="(val) => emit('update:name', val)"
+      @update:model-value="(val) => emit('update:key', val)"
     />
     <Hoppinput
       :class="{ 'opacity-50': !entityActive }"
@@ -45,10 +45,13 @@
     <span>
       <HoppButtonSecondary
         v-tippy="{ theme: 'tooltip' }"
-        :title="entityActive ? '关闭' : '开启'"
-        :icon="entityActive ? IconCheckCircle : IconCircle"
+        :title=" isActive ? '关闭' : '开启'"
+        :icon=" isActive ? IconCheckCircle : IconCircle"
         color="green"
-        @click="emit('update:entityActive', !entityActive)"
+        @click="() => {
+          isActive = !isActive;
+          emit('update:entityActive', isActive);
+        }"
       />
     </span>
     <span>
@@ -65,13 +68,14 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { HoppButtonSecondary, Hoppinput } from '@/components/Hopp'
 import { GripVerticalIcon as IconGripVertical } from 'lucide-vue-next'
 import { CheckCircleIcon as IconCheckCircle } from 'lucide-vue-next'
 import { CircleIcon as IconCircle } from 'lucide-vue-next'
 import { TrashIcon as IconTrash } from 'lucide-vue-next'
 
-defineProps<{
+const props = defineProps<{
   total: number
   index: number
   name: string
@@ -83,14 +87,18 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'delete', index: number): void
-  (e: 'update:name', val: string): void
+  (e: 'update:key', val: string): void
   (e: 'update:value', val: string): void
   (e: 'update:description', val: string): void
   (e: 'update:entityActive', val: boolean): void
 }>()
+
 const deleteEntity = (index: number) => {
   emit('delete', index)
 }
+
+const isActive = ref(props.entityActive)
+
 </script>
 
 

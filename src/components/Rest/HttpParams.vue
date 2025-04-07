@@ -33,9 +33,19 @@
         drag-class="cursor-grabbing"
       >
         <template #item="{ element: param, index }">
-          <HttpKeyValue :total="workingParams.length" :index="index" :entity-id=param.id
-                        v-model:entity-active="param.active" v-model:name="param.key"
-                        v-model:value="param.value" v-model:description="param.description">
+          <HttpKeyValue
+            :total="workingParams.length"
+            :index="index"
+            :entity-id=param.id
+            v-model:entity-active="param.active"
+            v-model:name="param.key"
+            v-model:value="param.value"
+            v-model:description="param.description"
+            @delete="handleDeleteParam(index)"
+            @update:key="val => updateParamKey(index, val)"
+            @update:value="val => updateParamValue(index, val)"
+            @update:description="val => updateParamDescription(index, val)"
+            @update:entityActive="val => updateParamActive(index, 'active', val)">
           </HttpKeyValue>
         </template>
       </draggable>
@@ -96,6 +106,7 @@ const addParam = () => {
 
 const clearContent = () => {
   workingParams.value = []
+  emit('update:params', [])
 }
 
 const emit = defineEmits<{
@@ -103,14 +114,53 @@ const emit = defineEmits<{
 }>()
 
 watch(() => props.modelValue, (newVal) => {
-  // 当父组件数据变化时，同步到本地并补充id
-  workingParams.value = newVal
-}, { immediate: true })
+  // 父组件同步
+  const existingIds = new Set(workingParams.value.map(p => p.id))
+
+  workingParams.value = [
+    ...workingParams.value.filter(p => newVal.some(np => np.key === p.key)),
+    ...newVal.filter(np => !existingIds.has(np.id))
+  ]
+}, { deep: true, immediate: true })
+
 
 watch(workingParams, (newVal) => {
   // 数据变化时回传父组件（去除临时id）
   emit('update:params', newVal)
 }, { deep: true })
+
+const updateParamKey = (index: number, value: string) => {
+  if (index >= 0 && index < workingParams.value.length) {
+    workingParams.value[index].key = value
+  }
+}
+
+const updateParamValue = (index: number, value: string) => {
+  if (index >= 0 && index < workingParams.value.length) {
+    workingParams.value[index].value = value
+  }
+}
+
+const updateParamDescription = (index: number, value: string) => {
+  if (index >= 0 && index < workingParams.value.length) {
+    workingParams.value[index].description = value
+  }
+  emit("update:params", workingParams.value)
+}
+
+const updateParamActive = (index: number, value: boolean) => {
+  if (index >= 0 && index < workingParams.value.length) {
+    workingParams.value[index].active = value
+  }
+  emit("update:params", workingParams.value)
+}
+
+const handleDeleteParam = (index: number) => {
+  if (index >= 0 && index < workingParams.value.length) {
+    workingParams.value.splice(index, 1)
+  }
+  emit("update:params", workingParams.value)
+}
 
 </script>
 

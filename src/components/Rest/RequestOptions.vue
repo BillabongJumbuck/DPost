@@ -10,7 +10,9 @@
         @update:params="(params) => $emit('update:params', params)"
       />
     </HoppTab>
-    <HoppTab id="bodyParams" label="请求体">请求体</HoppTab>
+    <HoppTab id="bodyParams" label="请求体">
+      <HttpBody/>
+    </HoppTab>
     <HoppTab id="headers" label="请求头">
       <HttpHeaders
         :model-value="tab.headers"
@@ -26,6 +28,7 @@ import { ref } from 'vue'
 import HttpHeaders from '@/components/Rest/HttpHeaders.vue'
 import type { DHttpKeyValueDoc, DHttpRequestDoc } from '@/utility/model'
 import HttpParams from '@/components/Rest/HttpParams.vue'
+import HttpBody from '@/components/Rest/HttpBody.vue'
 
 const selectedOptionTab = ref<'params' | 'bodyParams' | 'headers'>('params')
 

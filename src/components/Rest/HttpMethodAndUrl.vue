@@ -25,7 +25,6 @@
             </HoppSelectWrapper>
             <template #content="{ hide }">
               <div
-                ref="methodTippyActions"
                 class="flex flex-col focus:outline-none"
                 tabindex="0"
                 @keyup.escape="hide()"

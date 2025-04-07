@@ -34,6 +34,7 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     EnvInput: typeof import('./src/components/Hopp/EnvInput.vue')['default']
+    HttpBody: typeof import('./src/components/Rest/HttpBody.vue')['default']
     HttpHeaders: typeof import('./src/components/Rest/HttpHeaders.vue')['default']
     HttpMethodAndUrl: typeof import('./src/components/Rest/HttpMethodAndUrl.vue')['default']
     HttpParams: typeof import('./src/components/Rest/HttpParams.vue')['default']

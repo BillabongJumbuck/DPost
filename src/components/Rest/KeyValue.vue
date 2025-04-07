@@ -18,25 +18,36 @@
         tabindex="-1"
       />
     </span>
-    <Hoppinput
-      :class="{ 'opacity-50': !entityActive }"
-      :model-value="name"
-      :placeholder="'key'"
-      :auto-complete-source="keyAutoCompleteSource"
-      :auto-complete-env="true"
-      @update:model-value="(val) => emit('update:key', val)"
-    />
+    <span v-if="keyAutoCompleteSource?.length">
+      <el-autocomplete
+        :class="{ 'opacity-50': !entityActive }"
+        v-model="currentName"
+        :placeholder="'key'"
+        :fetch-suggestions="handleAutocompleteQuery"
+        clearable
+        value-key="value"
+        @select="handleAutocompleteSelect"
+        class="flex-1"
+      />
+    </span>
+    <span v-else>
+      <el-input
+        :class="{ 'opacity-50': !entityActive }"
+        v-model="currentName"
+        :placeholder="'key'"
+        class="flex-1 bg-transparent"
+        @input="handleRegularInput"
+      />
+    </span>
     <Hoppinput
       :class="{ 'opacity-50': !entityActive }"
       :model-value="value"
       :placeholder="'value'"
-      :auto-complete-source="keyAutoCompleteSource"
-      :auto-complete-env="true"
       @update:model-value="(val) => emit('update:value', val)"
     />
     <input
-      :model-value="description"
-      :placeholder="'Description'"
+      :value="description"
+      placeholder="Description"
       class="flex flex-1 px-4 bg-transparent"
       type="text"
       :class="{ 'opacity-50': !entityActive }"
@@ -68,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { HoppButtonSecondary, Hoppinput } from '@/components/Hopp'
 import { GripVerticalIcon as IconGripVertical } from 'lucide-vue-next'
 import { CheckCircleIcon as IconCheckCircle } from 'lucide-vue-next'
@@ -99,6 +110,37 @@ const deleteEntity = (index: number) => {
 
 const isActive = ref(props.entityActive)
 
+// 处理自动补全
+interface SuggestionItem {
+  value: string
+}
+
+const currentName = computed({
+  get: () => props.name,
+  set: (val) => emit('update:key', val)
+})
+
+// 自动补全处理函数
+const handleAutocompleteQuery = (
+  queryString: string,
+  cb: (suggestions: SuggestionItem[]) => void
+) => {
+  if (!props.keyAutoCompleteSource?.length) {
+    return cb([])
+  }
+  const suggestions = props.keyAutoCompleteSource
+    .filter(item => item.toLowerCase().includes(queryString.toLowerCase()))
+    .map(item => ({ value: item }))
+  cb(suggestions)
+}
+// 选中建议项时的处理
+const handleAutocompleteSelect = (item: SuggestionItem) => {
+  emit('update:key', item.value)
+}
+// 普通输入处理（非自动补全模式）
+const handleRegularInput = (val: string) => {
+  emit('update:key', val)
+}
 </script>
 
 <style scoped>

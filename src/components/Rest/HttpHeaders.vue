@@ -33,15 +33,16 @@
         chosen-class="bg-primaryLight"
         drag-class="cursor-grabbing"
       >
-        <template #item="{ element: param, index }">
+        <template #item="{ element: header, index }">
           <HttpKeyValue
             :total="workingHeaders.length"
             :index="index"
-            :entity-id=param.id
-            v-model:entity-active="param.active"
-            v-model:name="param.key"
-            v-model:value="param.value"
-            v-model:description="param.description"
+            :entity-id=header.id
+            v-model:entity-active="header.active"
+            v-model:name="header.key"
+            v-model:value="header.value"
+            v-model:description="header.description"
+            :key-auto-complete-source="commonHeaders"
             @delete="handleDeleteHeader(index)"
             @update:key="val => updateHeaderKey(index, val)"
             @update:value="val => updateHeaderValue(index, val)"
@@ -76,6 +77,7 @@ import HttpKeyValue from '@/components/Rest/KeyValue.vue'
 import draggable from 'vuedraggable-es'
 import { ref, watch } from 'vue'
 import type { DHttpKeyValueDoc } from '@/utility/model'
+import { commonHeaders } from '@/utility/helper/commonHeaders.ts'
 
 const props = defineProps<{
   modelValue: DHttpKeyValueDoc[]

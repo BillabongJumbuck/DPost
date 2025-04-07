@@ -6,6 +6,8 @@
     @sort="sortTabs"
   >
     <HoppWindow
+      :selected="true"
+      :close-visibility="'hover'"
       v-for="tab in tabs"
       :id="tab.id"
       :key="'tab_' + tab.id"

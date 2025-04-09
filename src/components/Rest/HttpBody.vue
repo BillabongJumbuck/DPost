@@ -15,7 +15,7 @@
         >
           <HoppSelectWrapper>
             <HoppButtonSecondary
-              :label="bodybody.contentType || '无'"
+              :label="body.contentType || '无'"
               class="ml-2 rounded-none pr-8"
             />
           </HoppSelectWrapper>
@@ -27,12 +27,12 @@
             >
               <HoppItem
                 :label="'无'"
-                :info-icon="(bodybody.contentType === null ? IconDone : null) as any"
-                :active-info-icon="bodybody.contentType === null"
+                :info-icon="(body.contentType === null ? IconDone : null) as any"
+                :active-info-icon="body.contentType === null"
                 @click="
                   () => {
-                    bodybody.contentType = null
-                    bodybody.body = null
+                    body.contentType = null
+                    body.bodyContent = null
                     hide()
                   }
                 "
@@ -57,14 +57,14 @@
                     :key="`contentTypeItem-${contentTypeIndex}`"
                     :label="contentTypeItem"
                     :info-icon="
-                      contentTypeItem === bodybody.contentType
+                      contentTypeItem === body.contentType
                         ? IconDone
                         : undefined
                     "
-                    :active-info-icon="contentTypeItem === bodybody.contentType"
+                    :active-info-icon="contentTypeItem === body.contentType"
                     @click="
                       () => {
-                        bodybody.contentType = contentTypeItem
+                        body.contentType = contentTypeItem
                         hide()
                       }
                     "
@@ -76,9 +76,9 @@
         </tippy>
       </span>
     </div>
-    <!--  <HttpRawBody v-else-if="body.contentType !== null" v-model="body" />-->
+    <HttpRawBody v-if="body.contentType !== null" :model-value="body"/>
     <HoppPlaceholder
-      v-if="bodybody.contentType == null"
+      v-if="body.contentType == null"
       :src="'/images/upload_single_file.svg'"
       :alt="`该请求没有任何请求体`"
       :text="'该请求没有任何请求体'"
@@ -90,7 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { Tippy } from 'vue-tippy'
 import {
   HoppButtonSecondary,
@@ -100,16 +99,19 @@ import {
 } from '@/components/Hopp'
 import { CheckIcon as IconDone } from 'lucide-vue-next'
 import { segmentedContentTypes } from '@/utility/helper/contenttypes.ts'
+import HttpRawBody from '@/components/Rest/HttpRawBody.vue'
+import type { DHttpBody } from '@/utility/model'
+import { useVModel } from "@vueuse/core"
 
-type bodyType = {
-  contentType: string | null,
-  body: string | null
-}
+const props = defineProps<{
+  body:DHttpBody
+}>()
 
-const bodybody = reactive<bodyType>({
-  contentType: null,
-  body: null
-})
+const emit = defineEmits<{
+  (e: "update:body", value: DHttpBody): void
+}>()
+
+const body = useVModel(props, "body", emit)
 
 </script>
 

@@ -11,7 +11,7 @@
       />
     </HoppTab>
     <HoppTab id="bodyParams" label="请求体">
-      <HttpBody/>
+      <HttpBody :body="tab.body"/>
     </HoppTab>
     <HoppTab id="headers" label="请求头">
       <HttpHeaders

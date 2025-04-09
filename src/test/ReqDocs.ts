@@ -16,7 +16,10 @@ export const ReqDocs: DHttpRequestDoc[] = [
     method: DHttpMethodType.GET,
     queryParams:[],
     headers:[],
-    body:""
+    body: {
+      contentType: null,
+      bodyContent : null
+    }
   },
 
   // 带响应的已修改文档
@@ -28,7 +31,10 @@ export const ReqDocs: DHttpRequestDoc[] = [
     method: DHttpMethodType.POST,
     queryParams:[],
     headers:[],
-    body:""
+    body: {
+      contentType: null,
+      bodyContent : null
+    }
   },
 
   // 文件上传文档
@@ -40,7 +46,10 @@ export const ReqDocs: DHttpRequestDoc[] = [
     method: DHttpMethodType.DELETE,
     queryParams:[],
     headers:[],
-    body:""
+    body: {
+      contentType: null,
+      bodyContent : null
+    }
   },
 
   // 未命名的脏文档
@@ -52,7 +61,10 @@ export const ReqDocs: DHttpRequestDoc[] = [
     method: DHttpMethodType.PATCH,
     queryParams:[],
     headers:[],
-    body:""
+    body: {
+      contentType: null,
+      bodyContent : null
+    }
   },
 
   // 复杂查询文档
@@ -64,7 +76,10 @@ export const ReqDocs: DHttpRequestDoc[] = [
     method: DHttpMethodType.GET,
     headers: [],
     queryParams: [],
-    body: "",
+    body: {
+      contentType: null,
+      bodyContent : null
+    },
     response: null
   }
 ]

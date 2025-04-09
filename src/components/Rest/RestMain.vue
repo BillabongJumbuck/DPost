@@ -83,7 +83,10 @@ const openNewTab = () => {
     isDirty: false,
     url: "https://api.example.com/users",
     method: DHttpMethodType.GET,
-    body: '',
+    body: {
+      contentType: null,
+      bodyContent: null
+    },
     headers: [],
     queryParams: [],
   }

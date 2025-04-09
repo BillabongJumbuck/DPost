@@ -1,6 +1,7 @@
 import type { DHttpResponse } from '@/utility/model/DHttpResponse.ts'
 import type { DHttpMethodType } from '@/utility/model/DHttpMethodType.ts'
 import type { DHttpKeyValueDoc } from '@/utility/model/DHttpKeyValueDoc.ts'
+import type { DHttpBody } from '@/utility/model/DHttpBody.ts'
 
 export type DHttpRequestDoc = {
   /**
@@ -36,7 +37,7 @@ export type DHttpRequestDoc = {
   /**
    * 请求头 (键值对格式)
    */
-  body: string;
+  body: DHttpBody;
   /**
    * 请求体
    */

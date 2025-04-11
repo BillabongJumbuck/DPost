@@ -8,36 +8,80 @@ import { yaml } from '@codemirror/lang-yaml'
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete'
 import { bracketMatching, indentOnInput, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { indentUnit } from '@codemirror/language'
-import { insertTab, indentLess, indentMore } from '@codemirror/commands' // Include indentMore
+import { insertTab, indentLess, indentMore } from '@codemirror/commands'
+import { linter, type Diagnostic } from '@codemirror/lint'
 import { vscodeLight } from '@uiw/codemirror-theme-vscode'
 import { isJSONContentType } from '@/utility/helper/contenttypes'
+import xmlFormat from 'xml-formatter'
 
-// Determine the language extension based on MIME type
-const getLanguage = (langMime: string) => {
+// JSON linter: Detects syntax errors and marks them
+const jsonLinter = linter((view) => {
+  const diagnostics: Diagnostic[] = []
+  const content = view.state.doc.toString()
+
+  if (!content) return diagnostics // Skip empty content
+
+  try {
+    JSON.parse(content)
+  } catch (e: any) {
+    const pos = e.mark?.position || 0 // Approximate error position
+    diagnostics.push({
+      from: pos,
+      to: pos + 1,
+      severity: 'error',
+      message: e.message || 'Invalid JSON syntax'
+    })
+  }
+  return diagnostics
+})
+
+// XML linter: Uses xmlFormat for validation
+const xmlLinter = linter((view) => {
+  const diagnostics: Diagnostic[] = []
+  const content = view.state.doc.toString()
+
+  if (!content) return diagnostics
+
+  try {
+    xmlFormat(content, { indentation: '  ' })
+  } catch (e: any) {
+    const pos = e.location?.startOffset || 0 // Approximate position
+    diagnostics.push({
+      from: pos,
+      to: pos + 1,
+      severity: 'error',
+      message: e.message || 'Invalid XML syntax'
+    })
+  }
+  return diagnostics
+})
+
+// Determine the language and linter based on MIME type
+const getLanguageAndLinter = (langMime: string) => {
   if (isJSONContentType(langMime)) {
-    return json()
+    return { language: json(), linter: jsonLinter }
   }
   switch (langMime) {
     case 'application/xml':
-      return xml()
+      return { language: xml(), linter: xmlLinter }
     case 'application/javascript':
-      return javascript()
+      return { language: javascript(), linter: null } // No linter for JS yet
     case 'text/yaml':
     case 'application/x-yaml':
-      return yaml()
+      return { language: yaml(), linter: null } // No linter for YAML yet
     case 'text/plain':
-      return null // Explicitly return null for plain text
+      return { language: null, linter: null } // No linting for plain text
     default:
-      return null // Return null for unrecognized MIME types (plain text mode)
+      return { language: null, linter: null } // Plain text mode
   }
 }
 
-// Base setup with explicit 2-space indentation
+// Base setup with 2-space indentation
 const basicSetup = [
   lineNumbers(),
   EditorView.lineWrapping,
   EditorState.allowMultipleSelections.of(true),
-  indentUnit.of('  '), // Explicitly set to 2 spaces
+  indentUnit.of('  '),
   syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
   vscodeLight,
   keymap.of([
@@ -45,17 +89,16 @@ const basicSetup = [
       key: 'Tab',
       preventDefault: true,
       run: (view: EditorView) => {
-        // If there's a selection, indent by 2 spaces; otherwise, insert 2 spaces
         if (view.state.selection.ranges.some(range => !range.empty)) {
-          return indentMore(view) // Indents selection by 2 spaces
+          return indentMore(view)
         }
-        return insertTab(view) // Inserts 2 spaces at cursor
+        return insertTab(view)
       }
     },
     {
       key: 'Shift-Tab',
       preventDefault: true,
-      run: indentLess // Outdents by 2 spaces
+      run: indentLess
     },
     {
       key: 'Ctrl-Space',
@@ -66,7 +109,6 @@ const basicSetup = [
     },
     { key: 'Mod-Enter', run: () => true }
   ]),
-  // Language-specific features (disabled for plain text)
   closeBrackets(),
   bracketMatching(),
   indentOnInput(),
@@ -88,14 +130,16 @@ export function useCodemirror(
   const lineWrap = new Compartment()
   const readOnly = new Compartment()
   const placeholderConfig = new Compartment()
+  const linterConfig = new Compartment()
 
   const initEditor = () => {
     if (!el.value) return
 
-    const langExtension = getLanguage(options.langMime)
+    const { language: langExtension, linter: lintExtension } = getLanguageAndLinter(options.langMime)
     const extensions = [
       basicSetup,
       language.of(langExtension ?? []),
+      linterConfig.of(lintExtension ? [lintExtension] : []),
       lineWrap.of(options.lineWrapping ? [EditorView.lineWrapping] : []),
       readOnly.of(options.readOnly ? [EditorState.readOnly.of(true)] : []),
       placeholderConfig.of(options.placeholder ? [placeholder(options.placeholder)] : []),
@@ -138,13 +182,16 @@ export function useCodemirror(
     { immediate: true }
   )
 
-  // Watch langMime to dynamically update language
+  // Watch langMime to dynamically update language and linter
   watch(
     () => options.langMime,
     (newLangMime) => {
-      const langExtension = getLanguage(newLangMime)
+      const { language: langExtension, linter: lintExtension } = getLanguageAndLinter(newLangMime)
       view.value?.dispatch({
-        effects: language.reconfigure(langExtension ?? [])
+        effects: [
+          language.reconfigure(langExtension ?? []),
+          linterConfig.reconfigure(lintExtension ? [lintExtension] : [])
+        ]
       })
     }
   )

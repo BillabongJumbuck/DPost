@@ -38,6 +38,9 @@ importers:
       '@codemirror/language':
         specifier: 6.11.0
         version: 6.11.0
+      '@codemirror/lint':
+        specifier: github:codemirror/lint
+        version: git+https://git@github.com:codemirror/lint.git#0718a09952e5831cd977b3c994ecd0836b3f3cc6
       '@codemirror/state':
         specifier: 6.5.2
         version: 6.5.2
@@ -351,6 +354,10 @@ packages:
 
   '@codemirror/lint@6.8.5':
     resolution: {integrity: sha512-s3n3KisH7dx3vsoeGMxsbRAgKe4O1vbrnKBClm99PU0fWxmxsx5rR2PfqQgIt+2MMJBHbiJ5rfIdLYfB9NNvsA==}
+
+  '@codemirror/lint@git+https://git@github.com:codemirror/lint.git#0718a09952e5831cd977b3c994ecd0836b3f3cc6':
+    resolution: {commit: 0718a09952e5831cd977b3c994ecd0836b3f3cc6, repo: git@github.com:codemirror/lint.git, type: git}
+    version: 6.8.5
 
   '@codemirror/search@6.5.10':
     resolution: {integrity: sha512-RMdPdmsrUf53pb2VwflKGHEe1XVM07hI7vV2ntgw1dmqhimpatSJKva4VA9h4TLUDOD4EIF02201oZurpnEFsg==}
@@ -2915,6 +2922,12 @@ snapshots:
       style-mod: 4.1.2
 
   '@codemirror/lint@6.8.5':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.36.5
+      crelt: 1.0.6
+
+  '@codemirror/lint@git+https://git@github.com:codemirror/lint.git#0718a09952e5831cd977b3c994ecd0836b3f3cc6':
     dependencies:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.5

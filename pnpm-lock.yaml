@@ -20,6 +20,9 @@ importers:
       '@codemirror/autocomplete':
         specifier: 6.18.6
         version: 6.18.6
+      '@codemirror/commands':
+        specifier: github:codemirror/commands
+        version: https://codeload.github.com/codemirror/commands/tar.gz/1fe425f7424887b96feadf8d9b0dc7f3afb80b44
       '@codemirror/lang-javascript':
         specifier: ^6.2.3
         version: https://codeload.github.com/codemirror/lang-javascript/tar.gz/fc71e4676cc342928b05a2083cc68f702ee9037b
@@ -324,6 +327,10 @@ packages:
 
   '@codemirror/commands@6.8.1':
     resolution: {integrity: sha512-KlGVYufHMQzxbdQONiLyGQDUW0itrLZwq3CcY7xpv9ZLRHqzkBSoteocBHtMCoY7/Ci4xhzSrToIeLg7FxHuaw==}
+
+  '@codemirror/commands@https://codeload.github.com/codemirror/commands/tar.gz/1fe425f7424887b96feadf8d9b0dc7f3afb80b44':
+    resolution: {tarball: https://codeload.github.com/codemirror/commands/tar.gz/1fe425f7424887b96feadf8d9b0dc7f3afb80b44}
+    version: 6.8.1
 
   '@codemirror/lang-javascript@https://codeload.github.com/codemirror/lang-javascript/tar.gz/fc71e4676cc342928b05a2083cc68f702ee9037b':
     resolution: {tarball: https://codeload.github.com/codemirror/lang-javascript/tar.gz/fc71e4676cc342928b05a2083cc68f702ee9037b}
@@ -2851,6 +2858,13 @@ snapshots:
       '@lezer/common': 1.2.3
 
   '@codemirror/commands@6.8.1':
+    dependencies:
+      '@codemirror/language': 6.11.0
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.36.5
+      '@lezer/common': 1.2.3
+
+  '@codemirror/commands@https://codeload.github.com/codemirror/commands/tar.gz/1fe425f7424887b96feadf8d9b0dc7f3afb80b44':
     dependencies:
       '@codemirror/language': 6.11.0
       '@codemirror/state': 6.5.2

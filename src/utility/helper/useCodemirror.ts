@@ -8,15 +8,16 @@ import { yaml } from '@codemirror/lang-yaml'
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete'
 import { bracketMatching, indentOnInput, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { indentUnit } from '@codemirror/language'
-import { vscodeLight } from '@uiw/codemirror-theme-vscode';
+import { insertTab, indentLess, indentMore } from '@codemirror/commands' // Include indentMore
+import { vscodeLight } from '@uiw/codemirror-theme-vscode'
+import { isJSONContentType } from '@/utility/helper/contenttypes'
 
+// Determine the language extension based on MIME type
 const getLanguage = (langMime: string) => {
+  if (isJSONContentType(langMime)) {
+    return json()
+  }
   switch (langMime) {
-    case 'application/json':
-    case 'application/ld+json':
-    case 'application/hal+json':
-    case 'application/vnd.api+json':
-      return json()
     case 'application/xml':
       return xml()
     case 'application/javascript':
@@ -24,23 +25,38 @@ const getLanguage = (langMime: string) => {
     case 'text/yaml':
     case 'application/x-yaml':
       return yaml()
+    case 'text/plain':
+      return null // Explicitly return null for plain text
     default:
-      return json() // Fallback
+      return null // Return null for unrecognized MIME types (plain text mode)
   }
 }
 
+// Base setup with explicit 2-space indentation
 const basicSetup = [
   lineNumbers(),
-  closeBrackets(),
-  bracketMatching(),
-  indentOnInput(),
-  autocompletion({ activateOnTyping: true }),
   EditorView.lineWrapping,
   EditorState.allowMultipleSelections.of(true),
-  indentUnit.of('  '),
+  indentUnit.of('  '), // Explicitly set to 2 spaces
   syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
   vscodeLight,
   keymap.of([
+    {
+      key: 'Tab',
+      preventDefault: true,
+      run: (view: EditorView) => {
+        // If there's a selection, indent by 2 spaces; otherwise, insert 2 spaces
+        if (view.state.selection.ranges.some(range => !range.empty)) {
+          return indentMore(view) // Indents selection by 2 spaces
+        }
+        return insertTab(view) // Inserts 2 spaces at cursor
+      }
+    },
+    {
+      key: 'Shift-Tab',
+      preventDefault: true,
+      run: indentLess // Outdents by 2 spaces
+    },
     {
       key: 'Ctrl-Space',
       run: (view: EditorView) => {
@@ -49,17 +65,22 @@ const basicSetup = [
       }
     },
     { key: 'Mod-Enter', run: () => true }
-  ])
+  ]),
+  // Language-specific features (disabled for plain text)
+  closeBrackets(),
+  bracketMatching(),
+  indentOnInput(),
+  autocompletion({ activateOnTyping: true })
 ]
 
 export function useCodemirror(
   el: Ref<HTMLElement | undefined>,
   content: Ref<string>,
   options: {
-    langMime: string; // Use MIME type
+    langMime: string;
     lineWrapping?: boolean;
-    readOnly?: boolean; // Add read-only option
-    placeholder?: string; // Add placeholder
+    readOnly?: boolean;
+    placeholder?: string;
   }
 ) {
   const view = ref<EditorView>()
@@ -71,9 +92,10 @@ export function useCodemirror(
   const initEditor = () => {
     if (!el.value) return
 
+    const langExtension = getLanguage(options.langMime)
     const extensions = [
       basicSetup,
-      language.of(getLanguage(options.langMime)),
+      language.of(langExtension ?? []),
       lineWrap.of(options.lineWrapping ? [EditorView.lineWrapping] : []),
       readOnly.of(options.readOnly ? [EditorState.readOnly.of(true)] : []),
       placeholderConfig.of(options.placeholder ? [placeholder(options.placeholder)] : []),
@@ -120,8 +142,9 @@ export function useCodemirror(
   watch(
     () => options.langMime,
     (newLangMime) => {
+      const langExtension = getLanguage(newLangMime)
       view.value?.dispatch({
-        effects: language.reconfigure(getLanguage(newLangMime))
+        effects: language.reconfigure(langExtension ?? [])
       })
     }
   )

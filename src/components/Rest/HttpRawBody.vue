@@ -65,7 +65,6 @@ import { useCodemirror } from '@/utility/helper/useCodemirror'
 import xmlFormat from 'xml-formatter'
 import type { DHttpBody } from '@/utility/model'
 import { prettifyJSONC } from '@/utility/helper/jsoncPretty.ts'
-import { isJSONContentType } from '@/utility/helper/contenttypes.ts'
 
 const props = defineProps<{
   modelValue: DHttpBody
@@ -86,8 +85,9 @@ const rawContent = ref(body.value.bodyContent ?? '')
 
 // Editor initialization
 const { view } = useCodemirror(editorEl, rawContent, {
-  language: isJSONContentType(body.value.contentType!) ? 'json' : 'xml',
-  lineWrapping: lineWrapping.value
+  langMime: body.value.contentType!,
+  lineWrapping: lineWrapping.value,
+  placeholder: "请输入请求体"
 })
 
 // Sync local state to parent

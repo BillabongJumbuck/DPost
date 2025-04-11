@@ -12,8 +12,7 @@
         :icon="IconGripVertical"
         class="opacity-0"
         :class="{
-          'draggable-handle cursor-grab group-hover:opacity-100':
-            index !== total - 1,
+          'draggable-handle cursor-grab group-hover:opacity-100': index !== total - 1,
         }"
         tabindex="-1"
       />
@@ -56,13 +55,15 @@
     <span>
       <HoppButtonSecondary
         v-tippy="{ theme: 'tooltip' }"
-        :title=" isActive ? '关闭' : '开启'"
-        :icon=" isActive ? IconCheckCircle : IconCircle"
+        :title="isActive ? '关闭' : '开启'"
+        :icon="isActive ? IconCheckCircle : IconCircle"
         color="green"
-        @click="() => {
-          isActive = !isActive;
-          emit('update:entityActive', isActive);
-        }"
+        @click="
+          () => {
+            isActive = !isActive
+            emit('update:entityActive', isActive)
+          }
+        "
       />
     </span>
     <span>
@@ -75,7 +76,6 @@
       />
     </span>
   </div>
-
 </template>
 
 <script setup lang="ts">
@@ -117,20 +117,20 @@ interface SuggestionItem {
 
 const currentName = computed({
   get: () => props.name,
-  set: (val) => emit('update:key', val)
+  set: (val) => emit('update:key', val),
 })
 
 // 自动补全处理函数
 const handleAutocompleteQuery = (
   queryString: string,
-  cb: (suggestions: SuggestionItem[]) => void
+  cb: (suggestions: SuggestionItem[]) => void,
 ) => {
   if (!props.keyAutoCompleteSource?.length) {
     return cb([])
   }
   const suggestions = props.keyAutoCompleteSource
-    .filter(item => item.toLowerCase().includes(queryString.toLowerCase()))
-    .map(item => ({ value: item }))
+    .filter((item) => item.toLowerCase().includes(queryString.toLowerCase()))
+    .map((item) => ({ value: item }))
   cb(suggestions)
 }
 // 选中建议项时的处理
@@ -143,6 +143,4 @@ const handleRegularInput = (val: string) => {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

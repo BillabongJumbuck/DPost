@@ -15,23 +15,14 @@
       :is-removable="tabs.length > 1"
     >
       <template #tabhead>
-        <HttpTabHead
-          :tab="tab"
-          :is-removable="tabs.length > 1"
-          @close-tab="removeTab(tab.id)"
-        />
+        <HttpTabHead :tab="tab" :is-removable="tabs.length > 1" @close-tab="removeTab(tab.id)" />
       </template>
       <template #suffix>
         <span
           v-if="tab.isDirty"
           class="flex w-4 items-center justify-center text-secondary group-hover:hidden"
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="1.2em"
-            height="1.2em"
-            class="h-1.5 w-1.5"
-          >
+          <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" class="h-1.5 w-1.5">
             <circle cx="12" cy="12" r="12" fill="currentColor"></circle>
           </svg>
         </span>
@@ -56,36 +47,36 @@ import {
   type DHttpKeyValueDoc,
   DHttpMethodType,
   type DHttpRequestDoc,
-  toDHttpMethod
+  toDHttpMethod,
 } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
 
-type tabType = DHttpRequestDoc;
-const tabs = ref<tabType[]>( ReqDocs );
+type tabType = DHttpRequestDoc
+const tabs = ref<tabType[]>(ReqDocs)
 const selectedTabId = ref(tabs.value[0].id)
 
 // 通过ID找到对应的tab对象
 const currentTab = computed(() => {
-  const tab = tabs.value.find(t => t.id === selectedTabId.value)
-  if (!tab) throw new Error("当前标签页不存在")
+  const tab = tabs.value.find((t) => t.id === selectedTabId.value)
+  if (!tab) throw new Error('当前标签页不存在')
   return reactive(tab)
 })
 
 watch(selectedTabId, (newVal) => {
-  const currentTab = tabs.value.find(tab => tab.id === newVal)
+  const currentTab = tabs.value.find((tab) => tab.id === newVal)
   console.log('当前选中标签页变化为:', currentTab)
 })
 
 const openNewTab = () => {
-  const newTab : tabType = {
+  const newTab: tabType = {
     id: Date.now().toString(),
-    name: "获取用户列表",
+    name: '获取用户列表',
     isDirty: false,
-    url: "https://api.example.com/users",
+    url: 'https://api.example.com/users',
     method: DHttpMethodType.GET,
     body: {
       contentType: null,
-      bodyContent: null
+      bodyContent: null,
     },
     headers: [],
     queryParams: [],
@@ -96,15 +87,13 @@ const openNewTab = () => {
 
 const removeTab = (tabID: string) => {
   // 过滤要关闭的标签页
-  tabs.value = tabs.value.filter(tab => {
+  tabs.value = tabs.value.filter((tab) => {
     const isClosingCurrent = tab.id === tabID && tab.id === selectedTabId.value
 
     if (isClosingCurrent) {
       // 智能选择新选中的标签页（优先前一个，否则后一个）
-      const closedIndex = tabs.value.findIndex(t => t.id === tabID)
-      const newSelected =
-        tabs.value[closedIndex - 1] ||
-        tabs.value[closedIndex + 1]
+      const closedIndex = tabs.value.findIndex((t) => t.id === tabID)
+      const newSelected = tabs.value[closedIndex - 1] || tabs.value[closedIndex + 1]
 
       selectedTabId.value = newSelected.id
     }
@@ -120,30 +109,28 @@ const sortTabs = (e: { oldIndex: number; newIndex: number }) => {
 }
 
 const handleMethodUpdate = (method: string) => {
-  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
-  targetTab.method =  toDHttpMethod(method)
+  const targetTab = tabs.value.find((tab) => tab.id === selectedTabId.value)!
+  targetTab.method = toDHttpMethod(method)
   targetTab.isDirty = true
 }
 
 const handleUrlUpdate = (url: string) => {
-  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  const targetTab = tabs.value.find((tab) => tab.id === selectedTabId.value)!
   targetTab.url = url
   targetTab.isDirty = true
 }
 
 const handleQueryParamsUpdate = (params: DHttpKeyValueDoc[]) => {
-  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  const targetTab = tabs.value.find((tab) => tab.id === selectedTabId.value)!
   targetTab.queryParams = params
   targetTab.isDirty = true
 }
 
 const handleHeadersUpdate = (headers: DHttpKeyValueDoc[]) => {
-  const targetTab = tabs.value.find(tab => tab.id === selectedTabId.value)!
+  const targetTab = tabs.value.find((tab) => tab.id === selectedTabId.value)!
   targetTab.headers = headers
   targetTab.isDirty = true
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

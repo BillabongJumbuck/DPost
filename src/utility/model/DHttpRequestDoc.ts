@@ -12,7 +12,7 @@ export type DHttpRequestDoc = {
   /**
    * The document name
    */
-  name: string;
+  name: string
 
   /**
    * Whether the request has any unsaved changes
@@ -24,24 +24,24 @@ export type DHttpRequestDoc = {
    * 请求 URL (包含协议和路径)
    * @example "https://api.example.com/v1/users"
    */
-  url: string;
+  url: string
   /**
    * HTTP 请求方法
    * @default 'GET'
    */
-  method: DHttpMethodType | DHttpMethodType.GET;
+  method: DHttpMethodType | DHttpMethodType.GET
   /**
    * 查询参数 (键值对格式)
    */
-  queryParams: DHttpKeyValueDoc[];
+  queryParams: DHttpKeyValueDoc[]
   /**
    * 请求头 (键值对格式)
    */
-  body: DHttpBody;
+  body: DHttpBody
   /**
    * 请求体
    */
-  headers: DHttpKeyValueDoc[];
+  headers: DHttpKeyValueDoc[]
   /**
    * The response as it is in the document
    * (if any)

@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col flex-1 h-auto overflow-y-hidden flex-nowrap">
-    <div class="sticky top-0 z-10 flex-shrink-0 overflow-x-auto tabs group-tabs divide-x divide-dividerLight bg-primaryLight">
+    <div
+      class="sticky top-0 z-10 flex-shrink-0 overflow-x-auto tabs group-tabs divide-x divide-dividerLight bg-primaryLight"
+    >
       <div class="flex flex-1 flex-shrink-0 w-0 overflow-hidden" ref="scrollContainer">
         <div class="flex justify-between divide-x divide-dividerLight" @wheel.prevent="scroll">
           <div class="flex">
@@ -62,8 +64,13 @@
               </template>
             </draggable>
           </div>
-          <div class="sticky right-0 z-20 flex items-center justify-center flex-shrink-0 overflow-x-auto">
-            <span v-if="canAddNewTab" class="z-[8] flex h-full items-center justify-center bg-primaryLight px-3">
+          <div
+            class="sticky right-0 z-20 flex items-center justify-center flex-shrink-0 overflow-x-auto"
+          >
+            <span
+              v-if="canAddNewTab"
+              class="z-[8] flex h-full items-center justify-center bg-primaryLight px-3"
+            >
               <HoppButtonSecondary
                 v-tippy="{ theme: 'tooltip' }"
                 :title="newText ?? 'New'"
@@ -104,17 +111,17 @@
 </template>
 
 <script setup lang="ts">
-import { HoppButtonSecondary } from "./"
-import { Plus as IconPlus} from "lucide-vue-next"
-import {X as IconX} from "lucide-vue-next"
-import { pipe } from "fp-ts/function"
-import { not } from "fp-ts/Predicate"
-import * as A from "fp-ts/Array"
-import * as O from "fp-ts/Option"
-import { ref, type ComputedRef, computed, provide, watch, nextTick, useSlots } from "vue"
-import { useElementSize } from "@vueuse/core"
-import type { Slot } from "vue"
-import draggable from "vuedraggable-es"
+import { HoppButtonSecondary } from './'
+import { Plus as IconPlus } from 'lucide-vue-next'
+import { X as IconX } from 'lucide-vue-next'
+import { pipe } from 'fp-ts/function'
+import { not } from 'fp-ts/Predicate'
+import * as A from 'fp-ts/Array'
+import * as O from 'fp-ts/Option'
+import { ref, type ComputedRef, computed, provide, watch, nextTick, useSlots } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import type { Slot } from 'vue'
+import draggable from 'vuedraggable-es'
 
 export type TabMeta = {
   label: string | null
@@ -123,7 +130,7 @@ export type TabMeta = {
   tabhead: Slot | undefined
   info: string | null
   isRemovable: boolean
-  closeVisibility: "hover" | "always" | "never"
+  closeVisibility: 'hover' | 'always' | 'never'
 }
 export type TabProvider = {
   renderInactive: ComputedRef<boolean>
@@ -132,7 +139,6 @@ export type TabProvider = {
   updateTabEntry: (tabID: string, newMeta: TabMeta) => void
   removeTabEntry: (tabID: string) => void
 }
-
 
 const props = withDefaults(
   defineProps<{
@@ -144,7 +150,7 @@ const props = withDefaults(
     closeText: string | null
   }>(),
   {
-    styles: "",
+    styles: '',
     renderInactiveTabs: false,
     canAddNewTab: true,
     newText: null,
@@ -153,10 +159,10 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: "update:modelValue", newTabID: string): void
-  (e: "sort", body: { oldIndex: number; newIndex: number }): void
-  (e: "removeTab", tabID: string): void
-  (e: "addTab"): void
+  (e: 'update:modelValue', newTabID: string): void
+  (e: 'sort', body: { oldIndex: number; newIndex: number }): void
+  (e: 'removeTab', tabID: string): void
+  (e: 'addTab'): void
 }>()
 
 const slots = useSlots()
@@ -170,15 +176,15 @@ const TAB_WIDTH = 184
 const tabEntries = ref<Array<[string, TabMeta]>>([])
 const tabStyles = computed(() => ({
   maxWidth: `${tabEntries.value.length * TAB_WIDTH}px`,
-  width: "100%",
-  minWidth: "0px",
+  width: '100%',
+  minWidth: '0px',
 }))
 const dragOptions = {
-  group: "tabs",
+  group: 'tabs',
   animation: 250,
-  handle: ".tab",
-  draggable: ".tab",
-  ghostClass: "cursor-move",
+  handle: '.tab',
+  draggable: '.tab',
+  ghostClass: 'cursor-move',
 }
 const addTabEntry = (tabID: string, meta: TabMeta) => {
   tabEntries.value = pipe(
@@ -193,10 +199,7 @@ const updateTabEntry = (tabID: string, newMeta: TabMeta) => {
     tabEntries.value,
     A.findIndex(([id]) => id === tabID),
     O.chain((index) =>
-      pipe(
-        tabEntries.value,
-        A.updateAt(index, [tabID, newMeta] as [string, TabMeta]),
-      ),
+      pipe(tabEntries.value, A.updateAt(index, [tabID, newMeta] as [string, TabMeta])),
     ),
     O.getOrElseW(() => throwError(`Failed to update tab entry: ${tabID}`)),
   )
@@ -210,12 +213,12 @@ const removeTabEntry = (tabID: string) => {
   )
 }
 const sortTabs = (e: { oldDraggableIndex: number; newDraggableIndex: number }) => {
-  emit("sort", {
+  emit('sort', {
     oldIndex: e.oldDraggableIndex,
     newIndex: e.newDraggableIndex,
   })
 }
-provide<TabProvider>("tabs-system", {
+provide<TabProvider>('tabs-system', {
   renderInactive: computed(() => props.renderInactiveTabs),
   activeTabID: computed(() => props.modelValue),
   addTabEntry,
@@ -223,10 +226,10 @@ provide<TabProvider>("tabs-system", {
   removeTabEntry,
 })
 const selectTab = (id: string) => {
-  emit("update:modelValue", id)
+  emit('update:modelValue', id)
 }
 const addTab = () => {
-  emit("addTab")
+  emit('addTab')
 }
 
 const MAX_SCROLL_VALUE = 500
@@ -264,7 +267,7 @@ watch(
   (tabID) => {
     nextTick(() => {
       const element = document.getElementById(`removable-tab-${tabID}`)
-      element?.scrollIntoView({ behavior: "smooth", inline: "center" })
+      element?.scrollIntoView({ behavior: 'smooth', inline: 'center' })
     })
   },
   { immediate: true },

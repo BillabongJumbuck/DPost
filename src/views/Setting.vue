@@ -2,14 +2,12 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'SysSetting'
+  name: 'SysSetting',
 })
 </script>
 
 <template>
-<div>Setting</div>
+  <div>Setting</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

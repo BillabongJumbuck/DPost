@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from "vue"
+import { computed, useSlots } from 'vue'
 
 withDefaults(
   defineProps<{
@@ -36,8 +36,8 @@ withDefaults(
     large?: boolean
   }>(),
   {
-    alt: "",
-    text: "",
+    alt: '',
+    text: '',
   },
 )
 

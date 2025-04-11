@@ -2,11 +2,24 @@
   <button v-if="renderedTag === 'BUTTON'" aria-label="button" role="button" v-bind="$attrs">
     <slot></slot>
   </button>
-  <a v-else-if="renderedTag === 'ANCHOR' && !blank" aria-label="Link" :href="to" role="link" v-bind="updatedAttrs">
+  <a
+    v-else-if="renderedTag === 'ANCHOR' && !blank"
+    aria-label="Link"
+    :href="to"
+    role="link"
+    v-bind="updatedAttrs"
+  >
     <slot></slot>
   </a>
-  <a v-else-if="renderedTag === 'ANCHOR' && blank" aria-label="Link" :href="to" role="link" target="_blank" rel="noopener"
-    v-bind="updatedAttrs">
+  <a
+    v-else-if="renderedTag === 'ANCHOR' && blank"
+    aria-label="Link"
+    :href="to"
+    role="link"
+    target="_blank"
+    rel="noopener"
+    v-bind="updatedAttrs"
+  >
     <slot></slot>
   </a>
   <RouterLink v-else :to="to" v-bind="updatedAttrs">
@@ -27,13 +40,13 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, useAttrs } from "vue"
-import { omit } from "lodash-es"
+import { computed, useAttrs } from 'vue'
+import { omit } from 'lodash-es'
 
 const props = defineProps({
   to: {
     type: String,
-    default: "",
+    default: '',
   },
   blank: {
     type: Boolean,
@@ -43,14 +56,14 @@ const props = defineProps({
 
 const renderedTag = computed(() => {
   if (!props.to) {
-    return "BUTTON" as const
+    return 'BUTTON' as const
   } else if (props.blank) {
-    return "ANCHOR" as const
+    return 'ANCHOR' as const
   } else if (/^\/(?!\/).*$/.test(props.to)) {
     // regex101.com/r/LU1iFL/1
-    return "FRAMEWORK" as const
+    return 'FRAMEWORK' as const
   } else {
-    return "ANCHOR" as const
+    return 'ANCHOR' as const
   }
 })
 
@@ -65,8 +78,6 @@ const $attrs = useAttrs()
  * here we are just omiting disabled if it is false.
  */
 const updatedAttrs = computed(() =>
-  renderedTag.value === "ANCHOR" && !$attrs.disabled
-    ? omit($attrs, "disabled")
-    : $attrs
+  renderedTag.value === 'ANCHOR' && !$attrs.disabled ? omit($attrs, 'disabled') : $attrs,
 )
 </script>

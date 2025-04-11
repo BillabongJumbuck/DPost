@@ -3,5 +3,5 @@ export type DHttpKeyValueDoc = {
   key: string
   value: string
   description: string // 原 Description -> description
-  active: boolean    // 原 isActive -> active
+  active: boolean // 原 isActive -> active
 }

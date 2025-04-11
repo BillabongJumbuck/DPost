@@ -15,7 +15,7 @@
       />
     </template>
     <template #secondary>
-<!--      <HttpResponse v-model:document="tab.document" :is-embed="false" />-->
+      <!--      <HttpResponse v-model:document="tab.document" :is-embed="false" />-->
       <div>响应内容</div>
     </template>
   </MainLayout>
@@ -26,7 +26,6 @@ import MainLayout from '@/Layout/MainLayout.vue'
 import type { DHttpKeyValueDoc, DHttpRequestDoc } from '@/utility/model'
 import HttpMethodAndUrl from '@/components/Rest/HttpMethodAndUrl.vue'
 import RequestOptions from '@/components/Rest/RequestOptions.vue'
-
 
 defineProps<{
   tab: DHttpRequestDoc
@@ -40,6 +39,4 @@ defineEmits<{
 }>()
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

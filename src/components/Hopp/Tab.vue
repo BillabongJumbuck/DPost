@@ -5,16 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  onMounted,
-  onBeforeUnmount,
-  inject,
-  computed,
-  watch,
-  type Component,
-  markRaw,
-} from "vue"
-import { type TabMeta, type TabProvider } from "./Tabs.vue"
+import { onMounted, onBeforeUnmount, inject, computed, watch, type Component, markRaw } from 'vue'
+import { type TabMeta, type TabProvider } from './Tabs.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -37,10 +29,7 @@ const props = withDefaults(
 
 const tabMeta = computed<TabMeta>(() => ({
   // props.icon can store a component, which should not be made deeply reactive
-  icon:
-    props.icon && typeof props.icon === "object"
-      ? markRaw(props.icon)
-      : props.icon,
+  icon: props.icon && typeof props.icon === 'object' ? markRaw(props.icon) : props.icon,
 
   indicator: props.indicator,
   info: props.info,
@@ -49,14 +38,8 @@ const tabMeta = computed<TabMeta>(() => ({
   alignLast: props.alignLast,
 }))
 
-const {
-  activeTabID,
-  renderInactive,
-  addTabEntry,
-  updateTabEntry,
-  removeTabEntry,
-  isUnmounting,
-} = inject<TabProvider>("tabs-system")!
+const { activeTabID, renderInactive, addTabEntry, updateTabEntry, removeTabEntry, isUnmounting } =
+  inject<TabProvider>('tabs-system')!
 
 const active = computed(() => activeTabID.value === props.id)
 

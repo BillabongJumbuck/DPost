@@ -10,34 +10,23 @@
       { 'flex-1': label },
       { 'flex-row-reverse justify-end': reverse },
       {
-        'border border-divider hover:border-dividerDark focus-visible:border-dividerDark':
-          outline,
+        'border border-divider hover:border-dividerDark focus-visible:border-dividerDark': outline,
       },
     ]"
     :disabled="disabled"
     :tabindex="loading ? '-1' : '0'"
     role="menuitem"
   >
-    <span
-      v-if="!loading"
-      class="inline-flex items-center"
-      :class="{ 'self-start': !!infoIcon }"
-    >
+    <span v-if="!loading" class="inline-flex items-center" :class="{ 'self-start': !!infoIcon }">
       <component
         :is="icon"
         v-if="icon"
         class="opacity-75 svg-icons"
-        :class="[
-          label ? (reverse ? 'ml-4' : 'mr-4') : '',
-          { 'text-accent': active },
-        ]"
+        :class="[label ? (reverse ? 'ml-4' : 'mr-4') : '', { 'text-accent': active }]"
       />
     </span>
     <HoppSpinner v-else class="mr-4 text-secondaryDark" />
-    <div
-      class="inline-flex items-start flex-1 truncate"
-      :class="{ 'flex-col': description }"
-    >
+    <div class="inline-flex items-start flex-1 truncate" :class="{ 'flex-col': description }">
       <div class="font-semibold truncate max-w-[16rem]">
         {{ label }}
       </div>
@@ -52,11 +41,7 @@
       :class="{ 'text-accent': activeInfoIcon }"
     />
     <div v-if="shortcut.length" class="ml-4 inline-flex <sm:hidden font-medium">
-      <kbd
-        v-for="(key, index) in shortcut"
-        :key="`key-${index}`"
-        class="-mr-2 shortcut-key"
-      >
+      <kbd v-for="(key, index) in shortcut" :key="`key-${index}`" class="-mr-2 shortcut-key">
         {{ key }}
       </kbd>
     </div>
@@ -64,9 +49,9 @@
 </template>
 
 <script lang="ts">
-import HoppLink from "./Link.vue"
-import HoppSpinner from "./Spinner.vue"
-import { defineComponent } from "vue"
+import HoppLink from './Link.vue'
+import HoppSpinner from './Spinner.vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   components: {
@@ -76,7 +61,7 @@ export default defineComponent({
   props: {
     to: {
       type: String,
-      default: "",
+      default: '',
     },
     exact: {
       type: Boolean,
@@ -88,11 +73,11 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: "",
+      default: '',
     },
     description: {
       type: String,
-      default: "",
+      default: '',
     },
     /**
      * This will be a component!

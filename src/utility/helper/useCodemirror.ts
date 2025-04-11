@@ -6,7 +6,12 @@ import { xml } from '@codemirror/lang-xml'
 import { javascript } from '@codemirror/lang-javascript'
 import { yaml } from '@codemirror/lang-yaml'
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete'
-import { bracketMatching, indentOnInput, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
+import {
+  bracketMatching,
+  indentOnInput,
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language'
 import { indentUnit, getIndentUnit } from '@codemirror/language'
 import { insertTab, indentLess, indentMore, insertNewlineAndIndent } from '@codemirror/commands'
 import { linter, type Diagnostic } from '@codemirror/lint'
@@ -27,7 +32,7 @@ const jsonLinter = linter((view) => {
       from: pos,
       to: pos + 1,
       severity: 'error',
-      message: e.message || 'Invalid JSON syntax'
+      message: e.message || 'Invalid JSON syntax',
     })
   }
   return diagnostics
@@ -46,7 +51,7 @@ const xmlLinter = linter((view) => {
       from: pos,
       to: pos + 1,
       severity: 'error',
-      message: e.message || 'Invalid XML syntax'
+      message: e.message || 'Invalid XML syntax',
     })
   }
   return diagnostics
@@ -93,7 +98,7 @@ const smartIndentOnEnter = (view: EditorView) => {
     // Insert newline and indent one level deeper
     view.dispatch({
       changes: { from: cursor, insert: '\n' + ' '.repeat(baseIndent + indentSize) + '\n' },
-      selection: { anchor: cursor + 1 + baseIndent + indentSize }
+      selection: { anchor: cursor + 1 + baseIndent + indentSize },
     })
     return true
   }
@@ -115,46 +120,46 @@ const basicSetup = [
       key: 'Tab',
       preventDefault: true,
       run: (view: EditorView) => {
-        if (view.state.selection.ranges.some(range => !range.empty)) {
+        if (view.state.selection.ranges.some((range) => !range.empty)) {
           return indentMore(view)
         }
         return insertTab(view)
-      }
+      },
     },
     {
       key: 'Shift-Tab',
       preventDefault: true,
-      run: indentLess
+      run: indentLess,
     },
     {
       key: 'Enter',
       preventDefault: true,
-      run: smartIndentOnEnter
+      run: smartIndentOnEnter,
     },
     {
       key: 'Ctrl-Space',
       run: (view: EditorView) => {
         startCompletion(view)
         return true
-      }
+      },
     },
-    { key: 'Mod-Enter', run: () => true }
+    { key: 'Mod-Enter', run: () => true },
   ]),
   closeBrackets(),
   bracketMatching(),
   indentOnInput(),
-  autocompletion({ activateOnTyping: true })
+  autocompletion({ activateOnTyping: true }),
 ]
 
 export function useCodemirror(
   el: Ref<HTMLElement | undefined>,
   content: Ref<string>,
   options: {
-    langMime: string;
-    lineWrapping?: boolean;
-    readOnly?: boolean;
-    placeholder?: string;
-  }
+    langMime: string
+    lineWrapping?: boolean
+    readOnly?: boolean
+    placeholder?: string
+  },
 ) {
   const view = ref<EditorView>()
   const language = new Compartment()
@@ -166,7 +171,9 @@ export function useCodemirror(
   const initEditor = () => {
     if (!el.value) return
 
-    const { language: langExtension, linter: lintExtension } = getLanguageAndLinter(options.langMime)
+    const { language: langExtension, linter: lintExtension } = getLanguageAndLinter(
+      options.langMime,
+    )
     const extensions = [
       basicSetup,
       language.of(langExtension ?? []),
@@ -176,7 +183,7 @@ export function useCodemirror(
       placeholderConfig.of(options.placeholder ? [placeholder(options.placeholder)] : []),
       EditorView.theme({
         '&': { height: '100%', width: '100%' },
-        '.cm-scroller': { height: '100%', overflow: 'auto' }
+        '.cm-scroller': { height: '100%', overflow: 'auto' },
       }),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
@@ -185,15 +192,15 @@ export function useCodemirror(
             content.value = newContent
           }
         }
-      })
+      }),
     ]
 
     view.value = new EditorView({
       parent: el.value,
       state: EditorState.create({
         doc: content.value,
-        extensions
-      })
+        extensions,
+      }),
     })
   }
 
@@ -205,12 +212,12 @@ export function useCodemirror(
           changes: {
             from: 0,
             to: view.value.state.doc.length,
-            insert: newVal
-          }
+            insert: newVal,
+          },
         })
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   watch(
@@ -220,28 +227,28 @@ export function useCodemirror(
       view.value?.dispatch({
         effects: [
           language.reconfigure(langExtension ?? []),
-          linterConfig.reconfigure(lintExtension ? [lintExtension] : [])
-        ]
+          linterConfig.reconfigure(lintExtension ? [lintExtension] : []),
+        ],
       })
-    }
+    },
   )
 
   watch(
     () => options.readOnly,
     (newReadOnly) => {
       view.value?.dispatch({
-        effects: readOnly.reconfigure(newReadOnly ? [EditorState.readOnly.of(true)] : [])
+        effects: readOnly.reconfigure(newReadOnly ? [EditorState.readOnly.of(true)] : []),
       })
-    }
+    },
   )
 
   watch(
     () => options.placeholder,
     (newPlaceholder) => {
       view.value?.dispatch({
-        effects: placeholderConfig.reconfigure(newPlaceholder ? [placeholder(newPlaceholder)] : [])
+        effects: placeholderConfig.reconfigure(newPlaceholder ? [placeholder(newPlaceholder)] : []),
       })
-    }
+    },
   )
 
   onMounted(initEditor)

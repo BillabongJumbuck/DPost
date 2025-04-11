@@ -3,9 +3,7 @@
     <div
       class="sticky top-upperMobileSecondaryStickyFold z-10 flex flex-shrink-0 items-center justify-between overflow-x-auto border-b border-dividerLight bg-primary pl-4 sm:top-upperSecondaryStickyFold"
     >
-      <label class="truncate font-semibold text-secondaryLight">
-        查询参数
-      </label>
+      <label class="truncate font-semibold text-secondaryLight"> 查询参数 </label>
       <div class="flex">
         <HoppButtonSecondary
           v-tippy="{ theme: 'tooltip' }"
@@ -36,16 +34,17 @@
           <HttpKeyValue
             :total="workingParams.length"
             :index="index"
-            :entity-id=param.id
+            :entity-id="param.id"
             v-model:entity-active="param.active"
             v-model:name="param.key"
             v-model:value="param.value"
             v-model:description="param.description"
             @delete="handleDeleteParam(index)"
-            @update:key="val => updateParamKey(index, val)"
-            @update:value="val => updateParamValue(index, val)"
-            @update:description="val => updateParamDescription(index, val)"
-            @update:entityActive="val => updateParamActive(index, val)">
+            @update:key="(val) => updateParamKey(index, val)"
+            @update:value="(val) => updateParamValue(index, val)"
+            @update:description="(val) => updateParamDescription(index, val)"
+            @update:entityActive="(val) => updateParamActive(index, val)"
+          >
           </HttpKeyValue>
         </template>
       </draggable>
@@ -56,12 +55,7 @@
         :text="'该请求没有任何参数'"
       >
         <template #body>
-          <HoppButtonSecondary
-            :label="'新增'"
-            :icon="IconPlus"
-            filled
-            @click="addParam"
-          />
+          <HoppButtonSecondary :label="'新增'" :icon="IconPlus" filled @click="addParam" />
         </template>
       </HoppPlaceholder>
     </div>
@@ -82,7 +76,7 @@ const props = defineProps<{
 
 const idTicker = ref(0)
 
-type WorkingParam = DHttpKeyValueDoc;
+type WorkingParam = DHttpKeyValueDoc
 
 const workingParams = ref<WorkingParam[]>([
   {
@@ -90,8 +84,8 @@ const workingParams = ref<WorkingParam[]>([
     key: '',
     value: '',
     active: true,
-    description: ''
-  }
+    description: '',
+  },
 ])
 
 const addParam = () => {
@@ -100,7 +94,7 @@ const addParam = () => {
     key: '',
     value: '',
     active: true,
-    description: ''
+    description: '',
   })
 }
 
@@ -113,53 +107,54 @@ const clearContent = () => {
   emit('update:params', [])
 }
 
-watch(() => props.modelValue, (newVal) => {
-  // 父组件同步
-  const existingIds = new Set(workingParams.value.map(p => p.id))
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    // 父组件同步
+    const existingIds = new Set(workingParams.value.map((p) => p.id))
 
-  workingParams.value = [
-    ...workingParams.value.filter(p => newVal.some(np => np.key === p.key)),
-    ...newVal.filter(np => !existingIds.has(np.id))
-  ]
-}, { deep: true, immediate: true })
+    workingParams.value = [
+      ...workingParams.value.filter((p) => newVal.some((np) => np.key === p.key)),
+      ...newVal.filter((np) => !existingIds.has(np.id)),
+    ]
+  },
+  { deep: true, immediate: true },
+)
 
 const updateParamKey = (index: number, value: string) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].key = value
   }
-  emit("update:params", workingParams.value)
+  emit('update:params', workingParams.value)
 }
 
 const updateParamValue = (index: number, value: string) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].value = value
   }
-  emit("update:params", workingParams.value)
+  emit('update:params', workingParams.value)
 }
 
 const updateParamDescription = (index: number, value: string) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].description = value
   }
-  emit("update:params", workingParams.value)
+  emit('update:params', workingParams.value)
 }
 
 const updateParamActive = (index: number, value: boolean) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value[index].active = value
   }
-  emit("update:params", workingParams.value)
+  emit('update:params', workingParams.value)
 }
 
 const handleDeleteParam = (index: number) => {
   if (index >= 0 && index < workingParams.value.length) {
     workingParams.value.splice(index, 1)
   }
-  emit("update:params", workingParams.value)
+  emit('update:params', workingParams.value)
 }
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -30,8 +30,8 @@ let inputIDCounter = 564275
 </script>
 
 <script setup lang="ts">
-import { onKeyStroke, useVModel } from "@vueuse/core"
-import { defineProps, onMounted, ref, nextTick } from "vue"
+import { onKeyStroke, useVModel } from '@vueuse/core'
+import { defineProps, onMounted, ref, nextTick } from 'vue'
 
 // Unique ID for input
 const inputID = `input-${inputIDCounter++}`
@@ -58,32 +58,32 @@ const props = withDefaults(
     autofocus: boolean
   }>(),
   {
-    id: "",
-    styles: "",
-    modelValue: "",
-    placeholder: "",
-    inputStyles: "input",
-    type: "text",
-    label: "",
+    id: '',
+    styles: '',
+    modelValue: '',
+    placeholder: '',
+    inputStyles: 'input',
+    type: 'text',
+    label: '',
     disabled: false,
     autofocus: true,
-  }
+  },
 )
 
 const emit = defineEmits<{
-  (e: "submit"): void
-  (e: "update:modelValue", v: string): void
+  (e: 'submit'): void
+  (e: 'update:modelValue', v: string): void
 }>()
 
-const inputText = useVModel(props, "modelValue", emit)
+const inputText = useVModel(props, 'modelValue', emit)
 
 onKeyStroke(
-  "Enter",
+  'Enter',
   (e) => {
     if (!e.repeat) {
-      return emit("submit")
+      return emit('submit')
     }
   },
-  { target: inputRef, eventName: "keydown" }
+  { target: inputRef, eventName: 'keydown' },
 )
 </script>

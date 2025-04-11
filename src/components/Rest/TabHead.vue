@@ -15,11 +15,7 @@
     >
       {{ tabState.method }}
     </span>
-    <tippy
-      trigger="manual"
-      interactive
-      theme="popover"
-    >
+    <tippy trigger="manual" interactive theme="popover">
       <span class="truncate">
         {{ tabState.name }}
       </span>
@@ -28,9 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed } from 'vue'
 import { Tippy } from 'vue-tippy'
-import { getMethodLabelColorClassOf } from "@/utility/helper/labelColoring.ts"
+import { getMethodLabelColorClassOf } from '@/utility/helper/labelColoring.ts'
 import type { DHttpRequestDoc } from '@/utility/model'
 
 const props = defineProps<{
@@ -46,7 +42,7 @@ const tabState = computed(() => {
 })
 
 const emit = defineEmits<{
-  (event: "open-rename-modal"): void
-  (event: "close-tab"): void
+  (event: 'open-rename-modal'): void
+  (event: 'close-tab'): void
 }>()
 </script>

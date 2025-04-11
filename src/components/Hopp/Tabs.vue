@@ -1,21 +1,12 @@
 <template>
-  <div
-    class="flex h-full flex-1 flex-nowrap"
-    :class="{ '!h-auto !flex-col': !vertical }"
-  >
+  <div class="flex h-full flex-1 flex-nowrap" :class="{ '!h-auto !flex-col': !vertical }">
     <div
       class="tabs relative border-dividerLight"
       :class="[vertical ? 'border-r' : 'border-b', styles]"
     >
       <div class="flex flex-1">
-        <div
-          class="flex flex-1 justify-between"
-          :class="{ 'flex-col': vertical }"
-        >
-          <template
-            v-for="(tabGroup, alignment) in alignedTabs"
-            :key="alignment"
-          >
+        <div class="flex flex-1 justify-between" :class="{ 'flex-col': vertical }">
+          <template v-for="(tabGroup, alignment) in alignedTabs" :key="alignment">
             <div
               class="flex flex-1"
               :class="{
@@ -49,13 +40,8 @@
                   class="svg-icons"
                   :class="{ 'mr-2': tabMeta.label && !vertical }"
                 />
-                <span v-if="tabMeta.label && !vertical">{{
-                  tabMeta.label
-                }}</span>
-                <span
-                  v-if="tabMeta.info && tabMeta.info !== 'null'"
-                  class="tab-info"
-                >
+                <span v-if="tabMeta.label && !vertical">{{ tabMeta.label }}</span>
+                <span v-if="tabMeta.info && tabMeta.info !== 'null'" class="tab-info">
                   {{ tabMeta.info }}
                 </span>
                 <span
@@ -86,12 +72,12 @@
 </template>
 
 <script setup lang="ts">
-import { pipe } from "fp-ts/function"
-import { not } from "fp-ts/Predicate"
-import * as A from "fp-ts/Array"
-import * as O from "fp-ts/Option"
-import type { Component, Ref } from "vue"
-import { ref, type ComputedRef, computed, provide, onBeforeUnmount } from "vue"
+import { pipe } from 'fp-ts/function'
+import { not } from 'fp-ts/Predicate'
+import * as A from 'fp-ts/Array'
+import * as O from 'fp-ts/Option'
+import type { Component, Ref } from 'vue'
+import { ref, type ComputedRef, computed, provide, onBeforeUnmount } from 'vue'
 
 export type TabMeta = {
   label: string | null
@@ -115,7 +101,7 @@ export type TabProvider = {
 const props = defineProps({
   styles: {
     type: String,
-    default: "",
+    default: '',
   },
   renderInactiveTabs: {
     type: Boolean,
@@ -131,12 +117,12 @@ const props = defineProps({
   },
   contentStyles: {
     type: String,
-    default: "",
+    default: '',
   },
 })
 
 const emit = defineEmits<{
-  (e: "update:modelValue", newTabID: string): void
+  (e: 'update:modelValue', newTabID: string): void
 }>()
 
 const throwError = (message: string): never => {
@@ -166,10 +152,7 @@ const updateTabEntry = (tabID: string, newMeta: TabMeta) => {
     tabEntries.value,
     A.findIndex(([id]) => id === tabID),
     O.chain((index) =>
-      pipe(
-        tabEntries.value,
-        A.updateAt(index, [tabID, newMeta] as [string, TabMeta]),
-      ),
+      pipe(tabEntries.value, A.updateAt(index, [tabID, newMeta] as [string, TabMeta])),
     ),
     O.getOrElseW(() => throwError(`Failed to update tab entry: ${tabID}`)),
   )
@@ -184,13 +167,12 @@ const removeTabEntry = (tabID: string) => {
   )
 
   // If we tried to remove the active tabEntries, switch to first tab entry
-  if (props.modelValue === tabID)
-    if (tabEntries.value.length > 0) selectTab(tabEntries.value[0][0])
+  if (props.modelValue === tabID) if (tabEntries.value.length > 0) selectTab(tabEntries.value[0][0])
 }
 
 const isUnmounting = ref(false)
 
-provide<TabProvider>("tabs-system", {
+provide<TabProvider>('tabs-system', {
   renderInactive: computed(() => props.renderInactiveTabs),
   activeTabID: computed(() => props.modelValue),
   addTabEntry,
@@ -204,7 +186,7 @@ onBeforeUnmount(() => {
 })
 
 const selectTab = (id: string) => {
-  emit("update:modelValue", id)
+  emit('update:modelValue', id)
 }
 </script>
 

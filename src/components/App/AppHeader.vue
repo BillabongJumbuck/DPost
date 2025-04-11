@@ -2,12 +2,9 @@
   <div class="h-full w-full">
     <div class="flex h-full gap-x-[10px]">
       <!-- 第一列 -->
-      <div class="flex-1 h-full flex items-center ">
-        <img width="48" height="48"
-             src="/logo.svg" alt="Logo">
-        <div class="font-extrabold text-indigo-950 text-4xl truncate pl-5">
-          DPost
-        </div>
+      <div class="flex-1 h-full flex items-center">
+        <img width="48" height="48" src="/logo.svg" alt="Logo" />
+        <div class="font-extrabold text-indigo-950 text-4xl truncate pl-5">DPost</div>
       </div>
 
       <!-- 第二列 -->
@@ -20,7 +17,7 @@
       </div>
 
       <!-- 第三列 -->
-      <div class="flex-1 h-full flex items-center justify-end ">
+      <div class="flex-1 h-full flex items-center justify-end">
         <el-button type="success" plain>
           <el-icon style="width: 24px; height: 24px">
             <UploadFilled />
@@ -33,10 +30,8 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { Search, UploadFilled } from '@element-plus/icons-vue'
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

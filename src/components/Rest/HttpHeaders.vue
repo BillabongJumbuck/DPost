@@ -4,9 +4,7 @@
       class="sticky z-10 flex flex-shrink-0 items-center justify-between overflow-x-auto border-b border-dividerLight bg-primary pl-4"
       :class="['top-upperMobileSecondaryStickyFold sm:top-upperSecondaryStickyFold']"
     >
-      <label class="truncate font-semibold text-secondaryLight">
-        请求头列表
-      </label>
+      <label class="truncate font-semibold text-secondaryLight"> 请求头列表 </label>
       <div class="flex">
         <HoppButtonSecondary
           v-tippy="{ theme: 'tooltip' }"
@@ -37,17 +35,18 @@
           <HttpKeyValue
             :total="workingHeaders.length"
             :index="index"
-            :entity-id=header.id
+            :entity-id="header.id"
             v-model:entity-active="header.active"
             v-model:name="header.key"
             v-model:value="header.value"
             v-model:description="header.description"
             :key-auto-complete-source="commonHeaders"
             @delete="handleDeleteHeader(index)"
-            @update:key="val => updateHeaderKey(index, val)"
-            @update:value="val => updateHeaderValue(index, val)"
-            @update:description="val => updateHeaderDescription(index, val)"
-            @update:entityActive="val => updateHeaderActive(index, val)">
+            @update:key="(val) => updateHeaderKey(index, val)"
+            @update:value="(val) => updateHeaderValue(index, val)"
+            @update:description="(val) => updateHeaderDescription(index, val)"
+            @update:entityActive="(val) => updateHeaderActive(index, val)"
+          >
           </HttpKeyValue>
         </template>
       </draggable>
@@ -58,12 +57,7 @@
         :text="'该请求没有任何请求头'"
       >
         <template #body>
-          <HoppButtonSecondary
-            :label="'新增'"
-            :icon="IconPlus"
-            filled
-            @click="addParam"
-          />
+          <HoppButtonSecondary :label="'新增'" :icon="IconPlus" filled @click="addParam" />
         </template>
       </HoppPlaceholder>
     </div>
@@ -85,7 +79,7 @@ const props = defineProps<{
 
 const idTicker = ref(0)
 
-type WorkingHeader = DHttpKeyValueDoc;
+type WorkingHeader = DHttpKeyValueDoc
 
 const workingHeaders = ref<WorkingHeader[]>([
   {
@@ -93,8 +87,8 @@ const workingHeaders = ref<WorkingHeader[]>([
     key: '',
     value: '',
     active: true,
-    description: ''
-  }
+    description: '',
+  },
 ])
 
 const addParam = () => {
@@ -103,7 +97,7 @@ const addParam = () => {
     key: '',
     value: '',
     active: true,
-    description: ''
+    description: '',
   })
 }
 
@@ -116,53 +110,54 @@ const clearContent = () => {
   emit('update:headers', [])
 }
 
-watch(() => props.modelValue, (newVal) => {
-  // 父组件同步
-  const existingIds = new Set(workingHeaders.value.map(p => p.id))
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    // 父组件同步
+    const existingIds = new Set(workingHeaders.value.map((p) => p.id))
 
-  workingHeaders.value = [
-    ...workingHeaders.value.filter(p => newVal.some(np => np.key === p.key)),
-    ...newVal.filter(np => !existingIds.has(np.id))
-  ]
-}, { deep: true, immediate: true })
+    workingHeaders.value = [
+      ...workingHeaders.value.filter((p) => newVal.some((np) => np.key === p.key)),
+      ...newVal.filter((np) => !existingIds.has(np.id)),
+    ]
+  },
+  { deep: true, immediate: true },
+)
 
 const updateHeaderKey = (index: number, value: string) => {
   if (index >= 0 && index < workingHeaders.value.length) {
     workingHeaders.value[index].key = value
   }
-  emit("update:headers", workingHeaders.value)
+  emit('update:headers', workingHeaders.value)
 }
 
 const updateHeaderValue = (index: number, value: string) => {
   if (index >= 0 && index < workingHeaders.value.length) {
     workingHeaders.value[index].value = value
   }
-  emit("update:headers", workingHeaders.value)
+  emit('update:headers', workingHeaders.value)
 }
 
 const updateHeaderDescription = (index: number, value: string) => {
   if (index >= 0 && index < workingHeaders.value.length) {
     workingHeaders.value[index].description = value
   }
-  emit("update:headers", workingHeaders.value)
+  emit('update:headers', workingHeaders.value)
 }
 
 const updateHeaderActive = (index: number, value: boolean) => {
   if (index >= 0 && index < workingHeaders.value.length) {
     workingHeaders.value[index].active = value
   }
-  emit("update:headers", workingHeaders.value)
+  emit('update:headers', workingHeaders.value)
 }
 
-const handleDeleteHeader= (index: number) => {
+const handleDeleteHeader = (index: number) => {
   if (index >= 0 && index < workingHeaders.value.length) {
     workingHeaders.value.splice(index, 1)
   }
-  emit("update:headers", workingHeaders.value)
+  emit('update:headers', workingHeaders.value)
 }
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

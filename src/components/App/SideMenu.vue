@@ -22,14 +22,28 @@
     </el-menu>
 
     <el-button style="border: none" class="collapse-btn">
-      <div v-if="isCollapse" @click="()=>{isCollapse = false}">
+      <div
+        v-if="isCollapse"
+        @click="
+          () => {
+            isCollapse = false
+          }
+        "
+      >
         <el-icon>
-          <arrow-right-bold/>
+          <arrow-right-bold />
         </el-icon>
       </div>
-      <div v-else  @click="()=>{isCollapse = true}">
+      <div
+        v-else
+        @click="
+          () => {
+            isCollapse = true
+          }
+        "
+      >
         <el-icon>
-          <arrow-left-bold/>
+          <arrow-left-bold />
         </el-icon>
       </div>
     </el-button>
@@ -38,12 +52,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import {
-  ArrowLeftBold,
-  ArrowRightBold,
-  Link,
-  Setting
-} from '@element-plus/icons-vue'
+import { ArrowLeftBold, ArrowRightBold, Link, Setting } from '@element-plus/icons-vue'
 
 import { useRoute } from 'vue-router'
 const route = useRoute()
@@ -51,7 +60,6 @@ const route = useRoute()
 const activeIndex = computed(() => {
   return route.path // 直接使用当前路径匹配
 })
-
 
 const isCollapse = ref(true)
 
@@ -96,7 +104,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   top: 0;
   bottom: 0;
   width: 4px; /* 左边框宽度 */
-  background: #409EFF; /* 蓝色边框 */
+  background: #409eff; /* 蓝色边框 */
   border-radius: 0 4px 4px 0; /* 右侧圆角 */
 }
 /* 折叠状态适配 */

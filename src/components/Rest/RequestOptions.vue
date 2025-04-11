@@ -4,14 +4,14 @@
     styles="sticky overflow-x-auto flex-shrink-0 bg-primary top-upperMobilePrimaryStickyFold sm:top-upperPrimaryStickyFold z-10"
     render-inactive-tabs
   >
-    <HoppTab id="params" label="参数" >
+    <HoppTab id="params" label="参数">
       <HttpParams
         :model-value="tab.queryParams"
         @update:params="(params) => $emit('update:params', params)"
       />
     </HoppTab>
     <HoppTab id="bodyParams" label="请求体">
-      <HttpBody :body="tab.body"/>
+      <HttpBody :body="tab.body" />
     </HoppTab>
     <HoppTab id="headers" label="请求头">
       <HttpHeaders
@@ -42,6 +42,4 @@ defineEmits<{
 }>()
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

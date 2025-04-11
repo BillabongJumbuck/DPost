@@ -1,4 +1,4 @@
-import { format, applyEdits } from "jsonc-parser"
+import { format, applyEdits } from 'jsonc-parser'
 
 export function prettifyJSONC(str: string) {
   const editResult = format(str, undefined, {

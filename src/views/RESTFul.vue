@@ -5,14 +5,14 @@ import RestMain from '@/components/Rest/RestMain.vue'
 
 export default defineComponent({
   name: 'RESTFul',
-  components: { RestMain, MainLayout }
+  components: { RestMain, MainLayout },
 })
 </script>
 
 <template>
   <MainLayout layout-id="rest" class="h-full w-full p-0 m-0" :horizontal="false">
     <template #primary>
-      <RestMain class="h-full w-full p-0 m-0"/>
+      <RestMain class="h-full w-full p-0 m-0" />
     </template>
     <template #secondary>
       <div>secondary</div>
@@ -20,6 +20,4 @@ export default defineComponent({
   </MainLayout>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

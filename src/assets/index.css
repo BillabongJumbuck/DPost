@@ -1,7 +1,7 @@
-@import "./scss/tailwind.scss";
+@import './scss/tailwind.scss';
 
-@import "./themes/themes.scss";
-@import "./scss/styles.scss";
+@import './themes/themes.scss';
+@import './scss/styles.scss';
 
 #app {
   position: absolute;
@@ -29,5 +29,4 @@ a,
 }
 
 @media (min-width: 1024px) {
-
 }

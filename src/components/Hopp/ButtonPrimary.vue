@@ -15,12 +15,10 @@
       { 'px-6 py-4 text-lg': large },
       { 'shadow-lg hover:shadow-xl': shadow },
       {
-        'bg-gradient-to-tr from-gradientFrom via-gradientVia to-gradientTo text-white':
-          gradient,
+        'bg-gradient-to-tr from-gradientFrom via-gradientVia to-gradientTo text-white': gradient,
       },
       {
-        'border border-accent hover:border-accentDark focus-visible:border-accentDark':
-          outline,
+        'border border-accent hover:border-accentDark focus-visible:border-accentDark': outline,
       },
     ]"
     :disabled="disabled"
@@ -35,10 +33,7 @@
         :is="icon"
         v-if="icon"
         class="svg-icons"
-        :class="[
-          { '!text-2xl': large },
-          label ? (reverse ? 'ml-2' : 'mr-2') : '',
-        ]"
+        :class="[{ '!text-2xl': large }, label ? (reverse ? 'ml-2' : 'mr-2') : '']"
       />
       <div class="max-w-[16rem] truncate">
         {{ label }}
@@ -53,18 +48,15 @@
         </kbd>
       </div>
     </span>
-    <span
-      v-if="loading"
-      class="absolute inset-0 flex items-center justify-center"
-    >
+    <span v-if="loading" class="absolute inset-0 flex items-center justify-center">
       <HoppSpinner />
     </span>
   </HoppLink>
 </template>
 
 <script setup lang="ts">
-import { HoppLink, HoppSpinner } from "."
-import type { Component } from "vue"
+import { HoppLink, HoppSpinner } from '.'
+import type { Component } from 'vue'
 
 interface Props {
   to?: string
@@ -86,13 +78,13 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  to: "",
+  to: '',
   exact: true,
   blank: false,
-  label: "",
+  label: '',
   icon: null,
   svg: null,
-  color: "",
+  color: '',
   disabled: false,
   loading: false,
   large: false,

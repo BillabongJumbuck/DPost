@@ -5,7 +5,8 @@
     :blank="blank"
     class="inline-flex items-center justify-center font-semibold transition whitespace-nowrap focus:outline-none"
     :class="[
-      color && isValidColor(color) ? colorClasses[color]
+      color && isValidColor(color)
+        ? colorClasses[color]
         : 'text-secondary hover:text-secondaryDark focus-visible:text-secondaryDark',
       { 'pointer-events-none': loading },
       label ? 'rounded px-4 py-2' : 'p-2',
@@ -14,12 +15,10 @@
       { 'flex-row-reverse': reverse },
       { 'px-6 py-4 text-lg': large },
       {
-        'border border-divider hover:border-dividerDark focus-visible:border-dividerDark':
-          outline,
+        'border border-divider hover:border-dividerDark focus-visible:border-dividerDark': outline,
       },
       {
-        'bg-primaryLight hover:bg-primaryDark focus-visible:bg-primaryDark':
-          filled,
+        'bg-primaryLight hover:bg-primaryDark focus-visible:bg-primaryDark': filled,
       },
     ]"
     :disabled="disabled"
@@ -35,10 +34,7 @@
         :is="icon"
         v-if="icon"
         class="svg-icons"
-        :class="[
-          { '!text-2xl': large },
-          label ? (reverse ? 'ml-2' : 'mr-2') : '',
-        ]"
+        :class="[{ '!text-2xl': large }, label ? (reverse ? 'ml-2' : 'mr-2') : '']"
       />
       <div class="truncate max-w-[16rem]">
         {{ label }}
@@ -58,8 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import { HoppLink, HoppSpinner } from "./"
-import type { Component } from "vue"
+import { HoppLink, HoppSpinner } from './'
+import type { Component } from 'vue'
 
 interface Props {
   to?: string
@@ -79,10 +75,10 @@ interface Props {
   filled?: boolean
 }
 withDefaults(defineProps<Props>(), {
-  to: "",
+  to: '',
   exact: true,
   blank: false,
-  label: "",
+  label: '',
   icon: null,
   svg: null,
   color: undefined,
@@ -99,7 +95,7 @@ withDefaults(defineProps<Props>(), {
 const colorClasses = {
   red: 'text-red-500 hover:text-red-600 focus-visible:text-red-600',
   blue: 'text-blue-500 hover:text-blue-600 focus-visible:text-blue-600',
-  green: 'text-green-500 hover:text-green-600 focus-visible:text-green-600'
+  green: 'text-green-500 hover:text-green-600 focus-visible:text-green-600',
 } as const
 
 type ValidColor = keyof typeof colorClasses

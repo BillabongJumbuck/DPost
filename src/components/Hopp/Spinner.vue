@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import { Loader as IconLucideLoader} from 'lucide-vue-next'
+import { Loader as IconLucideLoader } from 'lucide-vue-next'
 </script>

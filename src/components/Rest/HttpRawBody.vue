@@ -3,11 +3,8 @@
     <div
       class="sticky top-upperMobileStickyFold z-10 flex flex-shrink-0 items-center justify-between overflow-x-auto border-b border-dividerLight bg-primary pl-4 sm:top-upperMobileTertiaryStickyFold"
     >
-      <label class="truncate font-semibold text-secondaryLight">
-        原始请求体
-      </label>
+      <label class="truncate font-semibold text-secondaryLight"> 原始请求体 </label>
       <div class="flex">
-
         <HoppButtonSecondary
           v-tippy="{ theme: 'tooltip' }"
           :title="'清楚'"
@@ -56,7 +53,7 @@ import {
   SparklesIcon as IconSparkles,
   Trash2Icon as IconTrash2,
   Wand2Icon as IconWand2,
-  WrapTextIcon as IconWrapText
+  WrapTextIcon as IconWrapText,
 } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { useVModel } from '@vueuse/core'
@@ -76,7 +73,7 @@ const emit = defineEmits<{
 
 const body = useVModel(props, 'modelValue', emit, {
   passive: true,
-  deep: true
+  deep: true,
 })
 
 const editorEl = ref<HTMLElement>()
@@ -87,7 +84,7 @@ const rawContent = ref(body.value.bodyContent ?? '')
 const { view } = useCodemirror(editorEl, rawContent, {
   langMime: body.value.contentType!,
   lineWrapping: lineWrapping.value,
-  placeholder: "请输入请求体"
+  placeholder: '请输入请求体',
 })
 
 // Sync local state to parent
@@ -110,11 +107,11 @@ watch(
         changes: {
           from: 0,
           to: view.value.state.doc.length,
-          insert: contentToSet
-        }
+          insert: contentToSet,
+        },
       })
     }
-  }
+  },
 )
 
 const WRAP_LINES = ref(true)
@@ -123,7 +120,7 @@ const prettifyXML = (xml: string) => {
   return xmlFormat(xml, {
     indentation: '  ',
     collapseContent: true,
-    lineSeparator: '\n'
+    lineSeparator: '\n',
   })
 }
 

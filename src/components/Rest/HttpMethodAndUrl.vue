@@ -2,17 +2,10 @@
   <div
     class="sticky top-0 z-20 flex-none flex-shrink-0 bg-primary p-4 sm:flex sm:flex-shrink-0 sm:space-x-2"
   >
-    <div
-      class="min-w-[12rem] flex flex-1 whitespace-nowrap rounded border border-divider"
-    >
+    <div class="min-w-[12rem] flex flex-1 whitespace-nowrap rounded border border-divider">
       <div class="relative flex">
         <label for="method">
-          <tippy
-            interactive
-            trigger="click"
-            theme="popover"
-            :on-shown ="() => {}"
-          >
+          <tippy interactive trigger="click" theme="popover" :on-shown="() => {}">
             <HoppSelectWrapper>
               <input
                 id="method"
@@ -24,11 +17,7 @@
               />
             </HoppSelectWrapper>
             <template #content="{ hide }">
-              <div
-                class="flex flex-col focus:outline-none"
-                tabindex="0"
-                @keyup.escape="hide()"
-              >
+              <div class="flex flex-col focus:outline-none" tabindex="0" @keyup.escape="hide()">
                 <HoppItem
                   v-for="(method, index) in methods"
                   :key="`method-${index}`"
@@ -59,9 +48,7 @@
         id="send"
         v-tippy="{ theme: 'tooltip', delay: [500, 20], allowHTML: true }"
         :title="'发送'"
-        :label="`${
-          !isTabResponseLoading ? '发送' : '取消'
-        }`"
+        :label="`${!isTabResponseLoading ? '发送' : '取消'}`"
         class="min-w-[5rem] flex-1"
         @click="!isTabResponseLoading ? newSendRequest() : cancelRequest()"
       />
@@ -83,26 +70,24 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Tippy } from 'vue-tippy'
-import { HoppSelectWrapper, HoppItem, HoppButtonPrimary, HoppButtonSecondary } from '@/components/Hopp'
+import {
+  HoppSelectWrapper,
+  HoppItem,
+  HoppButtonPrimary,
+  HoppButtonSecondary,
+} from '@/components/Hopp'
 import type { DHttpRequestDoc } from '@/utility/model'
-import { getMethodLabelColor } from "@/utility/helper/labelColoring.ts"
+import { getMethodLabelColor } from '@/utility/helper/labelColoring.ts'
 import { SaveIcon as IconSave } from 'lucide-vue-next'
 
 const props = defineProps<{ tab: DHttpRequestDoc }>()
 
-const methods = [
-  "GET",
-  "POST",
-  "PUT",
-  "PATCH",
-  "DELETE",
-  "OPTIONS"
-]
+const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 // 组件定义
 const emit = defineEmits<{
-  (e: "update:method", method: string): void
-  (e: "update:url", url: string): void
+  (e: 'update:method', method: string): void
+  (e: 'update:url', url: string): void
 }>()
 
 const urlInput = ref(props.tab.url) // 初始化URL值
@@ -112,16 +97,16 @@ watch(
   (newUrl) => {
     urlInput.value = newUrl
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // 方法实现
 const updateMethod = (method: string) => {
-  emit("update:method", method) // 通知父组件更新
+  emit('update:method', method) // 通知父组件更新
 }
 
 watch(urlInput, (newUrl) => {
-  emit("update:url", newUrl) // URL变更同步
+  emit('update:url', newUrl) // URL变更同步
 })
 
 const onSelectMethod = (e: Event) => {
@@ -139,7 +124,5 @@ const cancelRequest = () => {
   isTabResponseLoading.value = false
 }
 
-const saveRequest = () => {
-
-}
+const saveRequest = () => {}
 </script>

@@ -45,7 +45,7 @@
         />
       </div>
     </div>
-    <div class="h-full relative flex flex-col flex-1">
+    <div class="relative flex-1">
       <div ref="editorEl" class="absolute inset-0"></div>
     </div>
   </div>
@@ -58,7 +58,7 @@ import {
   Wand2Icon as IconWand2,
   WrapTextIcon as IconWrapText
 } from 'lucide-vue-next'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useVModel } from '@vueuse/core'
 import { HoppButtonSecondary } from '@/components/Hopp'
 import { useCodemirror } from '@/utility/helper/useCodemirror'
@@ -75,36 +75,47 @@ const emit = defineEmits<{
   (e: 'update:modelValue', val: DHttpBody): void
 }>()
 
-const body = useVModel(props, 'modelValue', emit)
+const body = useVModel(props, 'modelValue', emit, {
+  passive: true,
+  deep: true
+})
 
 const editorEl = ref<HTMLElement>()
 const lineWrapping = ref(true)
+const rawContent = ref(body.value.bodyContent ?? '')
 
-// 编辑器初始化
-const { view } = useCodemirror(
-  editorEl,
-  computed(() => body.value.bodyContent || ''), // 确保传递字符串内容
-  {
-    language: isJSONContentType(body.value.contentType!) ? 'json' : 'xml', // 根据内容类型判断
-    lineWrapping: lineWrapping.value
+// Editor initialization
+const { view } = useCodemirror(editorEl, rawContent, {
+  language: isJSONContentType(body.value.contentType!) ? 'json' : 'xml',
+  lineWrapping: lineWrapping.value
+})
+
+// Sync local state to parent
+watch(rawContent, (newVal) => {
+  // Directly update bodyContent
+  body.value.bodyContent = newVal
+  // Ensure the parent is notified
+  emit('update:modelValue', { ...body.value, bodyContent: newVal })
+  console.log('Updated bodyContent:', newVal)
+})
+
+// Sync parent data to local state and editor
+watch(
+  () => props.modelValue.bodyContent,
+  (newVal) => {
+    const contentToSet = newVal ?? ''
+    if (contentToSet !== rawContent.value) {
+      rawContent.value = contentToSet
+      view.value?.dispatch({
+        changes: {
+          from: 0,
+          to: view.value.state.doc.length,
+          insert: contentToSet
+        }
+      })
+    }
   }
 )
-
-// 内容更新处理
-watch(
-  () => view.value?.state.doc.toString(),
-  (newVal) => {
-    if (newVal !== undefined && newVal !== body.value.bodyContent) {
-      body.value.bodyContent = newVal
-    }
-  },
-  { deep: true }
-)
-
-const rawParamsBody = computed({
-  get: () => body.value.bodyContent || '',
-  set: (val) => (body.value.bodyContent = val)
-})
 
 const WRAP_LINES = ref(true)
 
@@ -117,19 +128,18 @@ const prettifyXML = (xml: string) => {
 }
 
 const clearContent = () => {
-  rawParamsBody.value = ''
+  rawContent.value = ''
 }
 
 const prettifyRequestBody = () => {
   let prettifyBody = ''
   try {
     if (body.value.contentType?.endsWith('json')) {
-      prettifyBody = prettifyJSONC(rawParamsBody.value as string)
+      prettifyBody = prettifyJSONC(rawContent.value as string)
     } else if (body.value.contentType === 'application/xml') {
-      prettifyBody = prettifyXML(rawParamsBody.value as string)
+      prettifyBody = prettifyXML(rawContent.value as string)
     }
-    rawParamsBody.value = prettifyBody
-
+    rawContent.value = prettifyBody
   } catch (e) {
     console.error(e)
     // toast.error(`json_prettify_invalid_body`)
@@ -139,9 +149,29 @@ const prettifyRequestBody = () => {
 const shouldEnableAIFeatures = ref(true)
 
 const showModifyBodyModal = () => {}
-
 </script>
 
 <style scoped>
+/* Ensure the editor fills the container */
+.editor-container {
+  height: 100%;
+  width: 100%;
+}
 
+/* Style CodeMirror to fill its parent */
+:deep(.cm-editor) {
+  height: 100%;
+  width: 100%;
+}
+
+:deep(.cm-scroller) {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
+:deep(.cm-content) {
+  height: 100%;
+  width: 100%;
+}
 </style>

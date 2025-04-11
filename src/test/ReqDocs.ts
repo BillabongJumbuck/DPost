@@ -77,8 +77,8 @@ export const ReqDocs: DHttpRequestDoc[] = [
     headers: [],
     queryParams: [],
     body: {
-      contentType: null,
-      bodyContent : null
+      contentType: "text/html",
+      bodyContent : "<html lang='zh-ch'></html>"
     },
     response: null
   }

@@ -6,6 +6,7 @@
         :tab="tab"
         @update:method="(method) => $emit('update:method', method)"
         @update:url="(url) => $emit('update:url', url)"
+        @request:send="() => $emit('request:send')"
       />
       <RequestOptions
         :key="tab.id"
@@ -36,6 +37,7 @@ defineEmits<{
   (e: 'update:url', url: string): void
   (e: 'update:params', params: DHttpKeyValueDoc[]): void
   (e: 'update:headers', headers: DHttpKeyValueDoc[]): void
+  (e: 'request:send'):void
 }>()
 </script>
 

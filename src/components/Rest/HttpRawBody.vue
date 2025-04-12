@@ -93,7 +93,7 @@ watch(rawContent, (newVal) => {
   body.value.bodyContent = newVal
   // Ensure the parent is notified
   emit('update:modelValue', { ...body.value, bodyContent: newVal })
-  console.log('Updated bodyContent:', newVal)
+  // console.log('Updated bodyContent:', newVal)
 })
 
 // Sync parent data to local state and editor

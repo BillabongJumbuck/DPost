@@ -39,6 +39,7 @@ declare module 'vue' {
     HttpMethodAndUrl: typeof import('./src/components/Rest/HttpMethodAndUrl.vue')['default']
     HttpParams: typeof import('./src/components/Rest/HttpParams.vue')['default']
     HttpRawBody: typeof import('./src/components/Rest/HttpRawBody.vue')['default']
+    HttpReponse: typeof import('./src/components/Rest/HttpReponse.vue')['default']
     Input: typeof import('./src/components/Hopp/Input.vue')['default']
     Item: typeof import('./src/components/Hopp/Item.vue')['default']
     KeyValue: typeof import('./src/components/Rest/KeyValue.vue')['default']

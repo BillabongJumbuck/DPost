@@ -34,6 +34,7 @@
       @update:url="handleUrlUpdate"
       @update:params="handleQueryParamsUpdate"
       @update:headers="handleHeadersUpdate"
+      @request:send="handleRequestSend"
     />
   </HoppWindows>
 </template>
@@ -46,8 +47,8 @@ import { ReqDocs } from '@/test/ReqDocs.ts'
 import {
   type DHttpKeyValueDoc,
   DHttpMethodType,
-  type DHttpRequestDoc,
-  toDHttpMethod,
+  type DHttpRequestDoc, sendHttpRequest,
+  toDHttpMethod
 } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
 
@@ -130,6 +131,12 @@ const handleHeadersUpdate = (headers: DHttpKeyValueDoc[]) => {
   const targetTab = tabs.value.find((tab) => tab.id === selectedTabId.value)!
   targetTab.headers = headers
   targetTab.isDirty = true
+}
+
+const handleRequestSend = () => {
+  sendHttpRequest(currentTab.value).then((response) => {
+    console.log(response)
+  })
 }
 </script>
 

@@ -31,6 +31,7 @@
     "@uiw/codemirror-theme-github": "^4.23.10",
     "@uiw/codemirror-theme-vscode": "^4.23.10",
     "@vueuse/core": "^13.1.0",
+    "axios": "^1.8.4",
     "codemirror": "^6.0.1",
     "element-plus": "^2.9.7",
     "fp-ts": "^2.16.9",
@@ -67,13 +68,17 @@
     "vite-plugin-vue-devtools": "^7.7.2",
     "vue-tsc": "^2.2.8"
   },
-  "packageManager": "pnpm@10.7.1+sha256.dc514890ea719003cb7a57d6b21af24fdafadd9f171e7567eca1665d7cfcef76",
+  "packageManager": "pnpm@10.8.0+sha256.29bf2c5ceaea7991ee82eec15fe7162e0fad816d0c4a6b35a16c01d39274bf69",
   "pnpm": {
     "overrides": {
       "@codemirror/state": "6.5.2",
       "@codemirror/view": "6.36.5",
       "@codemirror/language": "6.11.0",
       "@codemirror/autocomplete": "6.18.6"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "esbuild",
+      "vue-demi"
+    ]
   }
 }

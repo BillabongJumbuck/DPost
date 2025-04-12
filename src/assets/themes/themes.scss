@@ -1,6 +1,6 @@
-@import 'base-themes';
-@import 'editor-themes';
-@import 'accent-themes';
+@use './base-themes' as *;
+@use './editor-themes' as *;
+@use './accent-themes' as *;
 
 :root {
   @include base-theme;

@@ -1,44 +1,51 @@
 import type { DHttpKeyValueDoc } from '@/utility/model/DHttpKeyValueDoc.ts'
+import type { DHttpRequestDoc } from '@/utility/model/DHttpRequestDoc.ts'
 
-/**
- * HTTP 响应实体类
- */
-export type  DHttpResponse =  {
-  /**
-   * HTTP 状态码
-   * @example 200
-   */
-  status: number
-
-  /**
-   * HTTP 状态描述
-   * @example "OK"
-   */
-  statusText: string
-
-  /**
-   * 响应头 (键值对格式)
-   * @example { "Content-Type": "application/json" }
-   */
+export type DHttpSuccessResponse = {
+  type: 'success'
   headers: DHttpKeyValueDoc[]
-
-  /**
-   * 响应主体内容（原始数据）
-   */
-  data: string
-
-  /**
-   * 原始响应对象 (根据具体 HTTP 客户端实现)
-   */
-  rawResponse: Response
-
-  /**
-   * 响应内容大小
-   */
-  size: number
-
-  /**
-   * 响应时间 ms
-   */
-  responseTime: number
+  body: ArrayBuffer
+  statusCode: number
+  statusText: string
+  meta: {
+    responseSize: number // in bytes
+    responseDuration: number // in millis
+  }
+  req: DHttpRequestDoc
 }
+
+export type DHttpFailureResponse = {
+  type: 'failure'
+  headers: DHttpKeyValueDoc[]
+  body: ArrayBuffer
+  statusCode: number
+  statusText: string
+  meta: {
+    responseSize: number // in bytes
+    responseDuration: number // in millis
+  }
+  req: DHttpRequestDoc
+}
+
+export type DHttpFailureNetwork = {
+  type: 'network_fail'
+  error: unknown
+  req: DHttpRequestDoc
+}
+
+export type DHttpFailureScript = {
+  type: 'script_fail'
+  error: Error
+}
+
+export type DHttpLoadingResponse = {
+  type: 'loading'
+  req: DHttpRequestDoc
+}
+
+export type DHttpResponse =
+  | DHttpLoadingResponse
+  | DHttpSuccessResponse
+  | DHttpFailureResponse
+  | DHttpFailureNetwork
+  | DHttpFailureScript

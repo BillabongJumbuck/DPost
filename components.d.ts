@@ -52,6 +52,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectWrapper: typeof import('./src/components/Hopp/SelectWrapper.vue')['default']
+    ShortCutPrompt: typeof import('./src/components/Rest/ShortCutPrompt.vue')['default']
     SideMenu: typeof import('./src/components/App/SideMenu.vue')['default']
     Spinner: typeof import('./src/components/Hopp/Spinner.vue')['default']
     Tab: typeof import('./src/components/Hopp/Tab.vue')['default']

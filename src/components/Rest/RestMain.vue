@@ -47,8 +47,9 @@ import { ReqDocs } from '@/test/ReqDocs.ts'
 import {
   type DHttpKeyValueDoc,
   DHttpMethodType,
-  type DHttpRequestDoc, sendHttpRequest,
-  toDHttpMethod
+  type DHttpRequestDoc,
+  sendHttpRequest,
+  toDHttpMethod,
 } from '@/utility/model'
 import RequestTab from '@/components/Rest/RequestTab.vue'
 
@@ -134,8 +135,12 @@ const handleHeadersUpdate = (headers: DHttpKeyValueDoc[]) => {
 }
 
 const handleRequestSend = () => {
+  currentTab.value.response = {
+    type: 'loading',
+    req: currentTab.value,
+  }
   sendHttpRequest(currentTab.value).then((response) => {
-    console.log(response)
+    currentTab.value.response = response
   })
 }
 </script>

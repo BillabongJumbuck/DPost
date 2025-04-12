@@ -88,7 +88,7 @@ const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 const emit = defineEmits<{
   (e: 'update:method', method: string): void
   (e: 'update:url', url: string): void
-  (e: 'request:send'):void
+  (e: 'request:send'): void
 }>()
 
 const urlInput = ref(props.tab.url) // 初始化URL值
@@ -119,7 +119,7 @@ const isTabResponseLoading = ref(false)
 
 const newSendRequest = async () => {
   isTabResponseLoading.value = true
-  emit("request:send");
+  emit('request:send')
 }
 
 const cancelRequest = () => {

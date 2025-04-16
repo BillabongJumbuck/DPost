@@ -9,6 +9,23 @@ import type {
   DHttpFailureScript,
 } from '@/utility/model'
 
+// 代理配置
+const PROXY_URL = 'http://47.94.135.9:3000/api/'
+
+// 判断是否为本地请求
+const isLocalRequest = (url: string): boolean => {
+  try {
+    const urlObj = new URL(url)
+    return (
+      urlObj.hostname === 'localhost' ||
+      urlObj.hostname === '127.0.0.1' ||
+      urlObj.hostname === '0.0.0.0'
+    )
+  } catch {
+    return false
+  }
+}
+
 // Utility to filter active key-value pairs and convert to object
 const toActiveKeyValueObject = (items: DHttpKeyValueDoc[]): Record<string, string> => {
   return items
@@ -31,7 +48,7 @@ const calculateSize = (data: ArrayBuffer | string): number => {
 }
 
 // Utility to convert response headers to DHttpKeyValueDoc[]
-const headersToKeyValueDocs = (headers: Record<string, any>): DHttpKeyValueDoc[] => {
+const headersToKeyValueDocs = (headers: Record<string, unknown>): DHttpKeyValueDoc[] => {
   return Object.entries(headers).map(([key, value], index) => ({
     id: `header-${index}-${key}-${Date.now()}`,
     key,
@@ -78,16 +95,20 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
       headers['Content-Type'] = request.body.contentType
     }
 
+    // 检查是否需要使用代理
+    const useProxy = !isLocalRequest(request.url)
+    const url = useProxy ? `${PROXY_URL}${request.url}` : request.url
+
     // Configure axios request
     const config = {
       method: request.method,
-      url: request.url,
+      url,
       headers,
       params,
       data,
-      responseType: 'arraybuffer' as const, // Use ArrayBuffer for body
-      validateStatus: () => true, // Accept all status codes
-      cancelToken: source.token, // 添加取消令牌
+      responseType: 'arraybuffer' as const,
+      validateStatus: () => true,
+      cancelToken: source.token,
     }
 
     // Send request
@@ -132,14 +153,14 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
         req: request,
       } satisfies DHttpFailureResponse
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // 如果是取消请求导致的错误，返回特定的响应
     if (axios.isCancel(error)) {
       return null
     }
     const responseTime = Math.round(performance.now() - startTime)
 
-    if (error.isAxiosError && error.response) {
+    if (axios.isAxiosError(error) && error.response) {
       // Handle HTTP errors (e.g., 4xx, 5xx)
       const responseBody = error.response.data || stringToArrayBuffer('')
       const responseSize = calculateSize(responseBody)
@@ -156,7 +177,7 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
         },
         req: request,
       } satisfies DHttpFailureResponse
-    } else if (error.isAxiosError) {
+    } else if (axios.isAxiosError(error)) {
       // Handle network errors
       return {
         type: 'network_fail',

@@ -79,6 +79,7 @@ import {
 import type { DHttpRequestDoc } from '@/utility/model'
 import { getMethodLabelColor } from '@/utility/helper/labelColoring.ts'
 import { SaveIcon as IconSave } from 'lucide-vue-next'
+import { cancelHttpRequest } from '@/utility/model/DHttpClient'
 
 const props = defineProps<{ tab: DHttpRequestDoc }>()
 
@@ -117,6 +118,16 @@ const onSelectMethod = (e: Event) => {
 
 const isTabResponseLoading = ref(false)
 
+watch(
+  () => props.tab.response,
+  (newResponse) => {
+    if (newResponse && newResponse.type !== 'loading') {
+      isTabResponseLoading.value = false
+    }
+  },
+  { immediate: true },
+)
+
 const newSendRequest = async () => {
   isTabResponseLoading.value = true
   emit('request:send')
@@ -124,6 +135,7 @@ const newSendRequest = async () => {
 
 const cancelRequest = () => {
   isTabResponseLoading.value = false
+  cancelHttpRequest(props.tab.id)
 }
 
 const saveRequest = () => {}

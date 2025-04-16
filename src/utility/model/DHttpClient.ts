@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from 'axios'
+import axios, { type AxiosResponse, type CancelTokenSource } from 'axios'
 import type {
   DHttpRequestDoc,
   DHttpResponse,
@@ -46,8 +46,21 @@ const stringToArrayBuffer = (str: string): ArrayBuffer => {
   return new TextEncoder().encode(str).buffer
 }
 
-export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpResponse> => {
+// 存储当前活动的请求
+const activeRequests = new Map<string, CancelTokenSource>()
+
+export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpResponse | null> => {
   const startTime = performance.now()
+
+  // 如果已经存在相同ID的请求，先取消它
+  if (activeRequests.has(request.id)) {
+    activeRequests.get(request.id)?.cancel('Request cancelled by user')
+    activeRequests.delete(request.id)
+  }
+
+  // 创建新的取消令牌
+  const source = axios.CancelToken.source()
+  activeRequests.set(request.id, source)
 
   try {
     // Prepare headers (only active)
@@ -74,6 +87,7 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
       data,
       responseType: 'arraybuffer' as const, // Use ArrayBuffer for body
       validateStatus: () => true, // Accept all status codes
+      cancelToken: source.token, // 添加取消令牌
     }
 
     // Send request
@@ -119,6 +133,10 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
       } satisfies DHttpFailureResponse
     }
   } catch (error: any) {
+    // 如果是取消请求导致的错误，返回特定的响应
+    if (axios.isCancel(error)) {
+      return null
+    }
     const responseTime = Math.round(performance.now() - startTime)
 
     if (error.isAxiosError && error.response) {
@@ -152,5 +170,16 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
         error: error instanceof Error ? error : new Error(String(error)),
       } satisfies DHttpFailureScript
     }
+  } finally {
+    // 请求完成后移除取消令牌
+    activeRequests.delete(request.id)
+  }
+}
+
+// 添加取消请求的方法
+export const cancelHttpRequest = (requestId: string): void => {
+  if (activeRequests.has(requestId)) {
+    activeRequests.get(requestId)?.cancel('Request cancelled by user')
+    activeRequests.delete(requestId)
   }
 }

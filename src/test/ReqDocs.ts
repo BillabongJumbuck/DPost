@@ -19,6 +19,7 @@ export const ReqDocs: DHttpRequestDoc[] = [
       contentType: null,
       bodyContent: null,
     },
+    response: null,
   },
 
   // 带响应的已修改文档
@@ -34,6 +35,7 @@ export const ReqDocs: DHttpRequestDoc[] = [
       contentType: null,
       bodyContent: null,
     },
+    response: null,
   },
 
   // 文件上传文档
@@ -49,6 +51,7 @@ export const ReqDocs: DHttpRequestDoc[] = [
       contentType: null,
       bodyContent: null,
     },
+    response: null,
   },
 
   // 未命名的脏文档
@@ -64,6 +67,7 @@ export const ReqDocs: DHttpRequestDoc[] = [
       contentType: null,
       bodyContent: null,
     },
+    response: null,
   },
 
   // 复杂查询文档

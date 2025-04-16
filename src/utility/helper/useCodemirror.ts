@@ -3,6 +3,7 @@ import { EditorView, keymap, lineNumbers, placeholder } from '@codemirror/view'
 import { EditorState, Compartment } from '@codemirror/state'
 import { json } from '@codemirror/lang-json'
 import { xml } from '@codemirror/lang-xml'
+import { html } from '@codemirror/lang-html'
 import { javascript } from '@codemirror/lang-javascript'
 import { yaml } from '@codemirror/lang-yaml'
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete'
@@ -65,6 +66,8 @@ const getLanguageAndLinter = (langMime: string) => {
   switch (langMime) {
     case 'application/xml':
       return { language: xml(), linter: xmlLinter }
+    case 'text/html':
+      return { language: html(), linter: null }
     case 'application/javascript':
       return { language: javascript(), linter: null }
     case 'text/yaml':

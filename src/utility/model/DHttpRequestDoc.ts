@@ -46,5 +46,5 @@ export type DHttpRequestDoc = {
    * The response as it is in the document
    * (if any)
    */
-  response?: DHttpResponse
+  response: DHttpResponse | null
 }

@@ -11,6 +11,17 @@
           <span class="text-secondaryLight">Loading</span>
         </div>
 
+        <HoppPlaceholder
+          v-if="response!.type === 'network_fail'"
+          :src="'/images/upload_error.svg'"
+          :alt="`网络错误`"
+          :heading="'网络错误'"
+          :text="'请检查你的网络连接'"
+        >
+          <template #body>
+          </template>
+        </HoppPlaceholder>
+
         <div
           v-if="response!.type === 'success' || response!.type === 'failure'"
           class="flex items-center text-tiny font-semibold"
@@ -37,16 +48,18 @@
         </div>
       </div>
     </div>
+    <ResponseBody :is-editable=false :response=response> </ResponseBody>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { DHttpResponse } from '@/utility/model'
-import { HoppSpinner } from '@/components/Hopp'
+import { HoppSpinner, HoppPlaceholder } from '@/components/Hopp'
 import findStatusGroup from '@/utility/helper/findStatusGroup.ts'
-import { getStatusCodeReasonPhrase } from '@/utility/helper/statusCode.ts'
+import { getStatusCodeReasonPhrase } from '@/utility/helper/statusCode'
 import ShortCutPrompt from '@/components/Rest/ShortCutPrompt.vue'
+import ResponseBody from '@/components/Rest/ResponseBody.vue'
 
 const props = defineProps<{
   response: DHttpResponse | null

@@ -5,13 +5,20 @@
     >
       <span class="flex items-center">
         <label class="truncate font-semibold text-secondaryLight"> 内容类型 </label>
-        <tippy interactive trigger="click" theme="popover" :offset="[40, 0]">
+        <tippy
+          interactive
+          trigger="click"
+          theme="popover"
+          :offset="[40, 0]"
+          :append-to="bodyRef ?? undefined"
+          :z-index="9999"
+        >
           <HoppSelectWrapper>
             <HoppButtonSecondary :label="body.contentType || '无'" class="ml-2 rounded-none pr-8" />
           </HoppSelectWrapper>
           <template #content="{ hide }">
             <div
-              class="flex flex-col space-y-2 divide-y divide-dividerLight focus:outline-none"
+              class="flex flex-col space-y-2 divide-y divide-dividerLight focus:outline-none z-[9999]"
               tabindex="0"
               @keyup.escape="hide()"
             >
@@ -83,6 +90,7 @@ import { segmentedContentTypes } from '@/utility/helper/contenttypes.ts'
 import HttpRawBody from '@/components/Rest/HttpRawBody.vue'
 import type { DHttpBody } from '@/utility/model'
 import { useVModel } from '@vueuse/core'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps<{
   body: DHttpBody
@@ -93,6 +101,11 @@ const emit = defineEmits<{
 }>()
 
 const body = useVModel(props, 'body', emit)
+const bodyRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  bodyRef.value = document.body
+})
 </script>
 
 <style scoped></style>

@@ -80,6 +80,7 @@ const openNewTab = () => {
       contentType: null,
       bodyContent: null,
     },
+    response: null,
     headers: [],
     queryParams: [],
   }
@@ -140,6 +141,7 @@ const handleRequestSend = () => {
     req: currentTab.value,
   }
   sendHttpRequest(currentTab.value).then((response) => {
+    console.log(response)
     currentTab.value.response = response
   })
 }

@@ -24,7 +24,7 @@
           :info="`${maybeHeaders.length}`"
           class="flex flex-1 flex-col"
         >
-          <LensesHeadersRenderer v-model="maybeHeaders" :is-editable="false" />
+          <ResponseHeaders :headers="maybeHeaders!" :is-editable="false" />
         </HoppTab>
   </HoppTabs>
 </template>
@@ -34,6 +34,7 @@ import { HoppTabs, HoppTab } from '@/components/Hopp'
 import type { DHttpResponse } from '@/utility/model'
 import { ref, computed, watch } from 'vue'
 import { getSuitableLenses, getLensRenderers } from '@/utility/helper/lenses/lenses'
+import ResponseHeaders from '@/components/Rest/ResponseHeaders.vue'
 
 const props = defineProps<{
   response: DHttpResponse | null

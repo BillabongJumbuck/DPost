@@ -52,6 +52,8 @@ declare module 'vue' {
     RequestOptions: typeof import('./src/components/Rest/RequestOptions.vue')['default']
     RequestTab: typeof import('./src/components/Rest/RequestTab.vue')['default']
     ResponseBody: typeof import('./src/components/Rest/ResponseBody.vue')['default']
+    ResponseHeaders: typeof import('./src/components/Rest/ResponseHeaders.vue')['default']
+    ResponseHeadersEntry: typeof import('./src/components/Rest/ResponseHeadersEntry.vue')['default']
     RestMain: typeof import('./src/components/Rest/RestMain.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

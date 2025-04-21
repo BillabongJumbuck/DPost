@@ -25,7 +25,7 @@
           v-if="responseBodyText"
           v-tippy="{ theme: 'tooltip', allowHTML: true }"
           :title="'复制'"
-          :icon="IconCopy"
+          :icon="!copySuccess ? copyIcon : IconCheck"
           @click="copyResponse"
         />
       </div>
@@ -48,6 +48,7 @@
 import {
   WrapTextIcon as IconWrapText,
   CopyIcon as IconCopy,
+  CheckIcon as IconCheck,
   EyeIcon as IconEye,
   EyeOffIcon as IconEyeOff,
 } from 'lucide-vue-next'
@@ -55,6 +56,7 @@ import { ref, computed } from 'vue'
 import { useCodemirror } from '@/utility/helper/useCodemirror'
 import type { DHttpResponse } from '@/utility/model'
 import { HoppButtonSecondary } from '@/components/Hopp'
+import { copyToClipboard } from '@/utility/helper/clipboards'
 
 const props = defineProps<{
   response: DHttpResponse
@@ -70,11 +72,20 @@ const responseBodyText = computed(() => {
 })
 
 // 复制功能
+const copyIcon = ref(IconCopy)
+const copySuccess = ref(false)
+
 const copyResponse = async () => {
-  try {
-    await navigator.clipboard.writeText(responseBodyText.value)
-  } catch (e) {
-    console.error('复制失败:', e)
+  const success = await copyToClipboard(responseBodyText.value)
+  if (success) {
+    copyIcon.value = IconCheck
+    copySuccess.value = true
+    setTimeout(() => {
+      copyIcon.value = IconCopy
+      copySuccess.value = false
+    }, 2000)
+  } else {
+    console.error('复制失败')
   }
 }
 

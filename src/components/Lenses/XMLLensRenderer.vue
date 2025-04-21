@@ -29,11 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import { WrapTextIcon as IconWrapText, CopyIcon as IconCopy } from 'lucide-vue-next'
+import {
+  WrapTextIcon as IconWrapText,
+  CopyIcon as IconCopy,
+  CheckIcon as IconCheck,
+} from 'lucide-vue-next'
 import { ref, computed } from 'vue'
 import { useCodemirror } from '@/utility/helper/useCodemirror'
 import type { DHttpResponse } from '@/utility/model'
 import { HoppButtonSecondary } from '@/components/Hopp'
+import { copyToClipboard } from '@/utility/helper/clipboards'
 
 const props = defineProps<{
   response: DHttpResponse
@@ -48,12 +53,17 @@ const responseBodyText = computed(() => {
   return ''
 })
 
-// 复制功能
+const copyIcon = ref(IconCopy)
+
 const copyResponse = async () => {
-  try {
-    await navigator.clipboard.writeText(responseBodyText.value)
-  } catch (e) {
-    console.error('复制失败:', e)
+  const success = await copyToClipboard(responseBodyText.value)
+  if (success) {
+    copyIcon.value = IconCheck
+    setTimeout(() => {
+      copyIcon.value = IconCopy
+    }, 2000)
+  } else {
+    console.error('复制失败')
   }
 }
 

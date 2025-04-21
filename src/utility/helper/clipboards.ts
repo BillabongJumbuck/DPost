@@ -1,18 +1,25 @@
 /**
- * Copies a given string to the clipboard using
- * the legacy exec method
- *
- * @param content The content to be copied
+ * Copies text to clipboard and returns success status
  */
-export function copyToClipboard(content: string) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(content)
-  } else {
-    const dummy = document.createElement("textarea")
-    document.body.appendChild(dummy)
+export async function copyToClipboard(content: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(content)
+      return true
+    }
+
+    // Fallback for older browsers
+    const dummy = document.createElement('textarea')
+    dummy.style.position = 'fixed'
+    dummy.style.opacity = '0'
     dummy.value = content
+    document.body.appendChild(dummy)
     dummy.select()
-    document.execCommand("copy")
+    const success = document.execCommand('copy')
     document.body.removeChild(dummy)
+    return success
+  } catch (err) {
+    console.error('Copy failed:', err)
+    return false
   }
 }

@@ -64,6 +64,19 @@ const currentTab = computed(() => {
   return reactive(tab)
 })
 
+// 添加 watch 来监听 currentTab 的变化
+watch(
+  currentTab,
+  (newVal) => {
+    emit('update:current-tab', newVal)
+  },
+  { deep: true },
+)
+
+const emit = defineEmits<{
+  'update:current-tab': [tab: tabType]
+}>()
+
 watch(selectedTabId, (newVal) => {
   const currentTab = tabs.value.find((tab) => tab.id === newVal)
   console.log('当前选中标签页变化为:', currentTab)

@@ -79,12 +79,16 @@ const errorState = ref(false)
 // 组件挂载时触发一次代码生成
 onMounted(() => {
   console.log('Codegen 组件已挂载')
+  console.log('当前请求:', props.request)
   if (props.request) {
     console.log('初始化代码生成')
     const generator = CodegenDefinitions.find((x) => x.name === codegenType.value)
+    console.log('找到的生成器:', generator)
     if (generator) {
       generatedContent.value = `// 代码生成类型: ${codegenType.value}\n// 请求URL: ${props.request.url}\n// 请求方法: ${props.request.method}`
     }
+  } else {
+    console.log('没有选中的请求，跳过初始化代码生成')
   }
 })
 
@@ -123,14 +127,15 @@ watch(
     console.log('当前选中的请求变化:', newRequest)
     if (codegenType.value) {
       const generator = CodegenDefinitions.find((x) => x.name === codegenType.value)
+      console.log('找到的生成器:', generator)
       if (generator && newRequest) {
         // 临时使用一个简单的字符串作为生成的代码
         generatedContent.value = `// 代码生成类型: ${codegenType.value}\n// 请求URL: ${newRequest.url}\n// 请求方法: ${newRequest.method}`
       }
     }
   },
-  { deep: true },
-)
+  { deep: true, immediate: true },
+) // 添加 immediate: true 确保立即执行一次
 
 // 复制生成的代码
 const copyResponse = async () => {

@@ -57,6 +57,10 @@ type tabType = DHttpRequestDoc
 const tabs = ref<tabType[]>(ReqDocs)
 const selectedTabId = ref(tabs.value[0].id)
 
+const emit = defineEmits<{
+  'update:current-tab': [tab: tabType]
+}>()
+
 // 通过ID找到对应的tab对象
 const currentTab = computed(() => {
   const tab = tabs.value.find((t) => t.id === selectedTabId.value)
@@ -70,12 +74,8 @@ watch(
   (newVal) => {
     emit('update:current-tab', newVal)
   },
-  { deep: true },
+  { deep: true, immediate: true },
 )
-
-const emit = defineEmits<{
-  'update:current-tab': [tab: tabType]
-}>()
 
 watch(selectedTabId, (newVal) => {
   const currentTab = tabs.value.find((tab) => tab.id === newVal)

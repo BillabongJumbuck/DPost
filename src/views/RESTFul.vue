@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import MainLayout from '@/Layout/MainLayout.vue'
 import RestMain from '@/components/Rest/RestMain.vue'
 import RestSidebar from '@/components/RestRightSideBar/SidebarIndex.vue'
@@ -10,6 +10,16 @@ export default defineComponent({
   components: { RestSidebar, RestMain, MainLayout },
   setup() {
     const currentTab = ref<DHttpRequestDoc | null>(null)
+
+    // 监听 currentTab 的变化
+    watch(
+      currentTab,
+      (newVal) => {
+        console.log('RESTFul 中的 currentTab 变化:', newVal)
+      },
+      { deep: true },
+    )
+
     return { currentTab }
   },
 })

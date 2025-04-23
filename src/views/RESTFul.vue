@@ -2,10 +2,11 @@
 import { defineComponent } from 'vue'
 import MainLayout from '@/Layout/MainLayout.vue'
 import RestMain from '@/components/Rest/RestMain.vue'
+import RestSidebar from '@/components/RestRightSideBar/SidebarIndex.vue'
 
 export default defineComponent({
   name: 'RESTFul',
-  components: { RestMain, MainLayout },
+  components: { RestSidebar, RestMain, MainLayout },
 })
 </script>
 
@@ -15,7 +16,7 @@ export default defineComponent({
       <RestMain class="h-full w-full p-0 m-0" />
     </template>
     <template #secondary>
-      <div>secondary</div>
+      <RestSidebar/>
     </template>
   </MainLayout>
 </template>

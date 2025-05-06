@@ -35,6 +35,7 @@ const props = defineProps<{
   isEditable: boolean
 }>()
 
+const copyHeaders = () => { }
 </script>
 
 

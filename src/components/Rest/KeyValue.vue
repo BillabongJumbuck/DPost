@@ -31,16 +31,25 @@
     </span>
     <span v-else>
       <el-input
-        :class="{ 'opacity-50': !entityActive }"
-        v-model="currentName"
+        :id="props.index.toString()"
+        :input-styles="''"
+        :type="'text'"
+        :label="''"
+        :autofocus="false"
+        :styles="{ 'opacity-50': !entityActive }" v-model="currentName"
         :placeholder="'key'"
         class="flex-1 bg-transparent"
         @input="handleRegularInput"
       />
     </span>
     <Hoppinput
-      :class="{ 'opacity-50': !entityActive }"
+      :id="valueInputId"
+      :styles="computedValueStyles" :input-styles="''"
+      :type="'text'"
+      :label="''"
+      :autofocus="false"
       :model-value="value"
+      :disabled="false"
       :placeholder="'value'"
       @update:model-value="(val) => emit('update:value', val)"
     />
@@ -109,6 +118,20 @@ const deleteEntity = (index: number) => {
 }
 
 const isActive = ref(props.entityActive)
+
+// --- 计算 Hoppinput value 的样式字符串 ---
+const computedValueStyles = computed(() => {
+  // 可以添加其他静态 class，然后根据条件添加动态 class
+  const classes = [];
+  if (!props.entityActive) {
+    classes.push('opacity-50');
+  }
+  // 将 class 数组转换为字符串
+  return classes.join(' ');
+});
+// ---------------------------------------
+
+const valueInputId = computed(() => `keyvalue-value-input-${props.index}`);
 
 // 处理自动补全
 interface SuggestionItem {

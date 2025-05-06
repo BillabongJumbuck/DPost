@@ -4,7 +4,11 @@
     @add-tab="openNewTab"
     @remove-tab="removeTab"
     @sort="sortTabs"
-  >
+    :styles="''"
+    :render-inactive-tabs="false"
+    :can-add-new-tab="true"
+    :new-text="null"
+    :close-text="null"       >
     <HoppWindow
       :selected="true"
       :close-visibility="'hover'"
@@ -13,6 +17,7 @@
       :key="'tab_' + tab.id"
       :label="tab.name"
       :is-removable="tabs.length > 1"
+      :info="null"
     >
       <template #tabhead>
         <HttpTabHead :tab="tab" :is-removable="tabs.length > 1" @close-tab="removeTab(tab.id)" />

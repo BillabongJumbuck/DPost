@@ -96,7 +96,8 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
     }
 
     // 检查是否需要使用代理
-    const useProxy = !isLocalRequest(request.url)
+    // const useProxy = !isLocalRequest(request.url)
+    const useProxy = false;
     const url = useProxy ? `${PROXY_URL}${request.url}` : request.url
 
     // Configure axios request

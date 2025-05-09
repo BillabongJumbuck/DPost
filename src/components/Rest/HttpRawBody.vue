@@ -7,7 +7,7 @@
       <div class="flex">
         <HoppButtonSecondary
           v-tippy="{ theme: 'tooltip' }"
-          :title="'清楚'"
+          :title="'清除'"
           :icon="IconTrash2"
           @click="clearContent"
         />

@@ -33,10 +33,11 @@ import {
   CopyIcon as IconCopy,
   CheckIcon as IconCheck,
 } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useCodemirror } from '@/utility/helper/useCodemirror'
 import type { DHttpResponse } from '@/utility/model'
 import { copyToClipboard } from '@/utility/helper/clipboards'
+import { prettifyJSONC } from '@/utility/helper/jsoncPretty.ts'
 
 const props = defineProps<{
   response: DHttpResponse
@@ -54,16 +55,24 @@ const showResponse = computed(() => {
   return props.response.type === 'success' || props.response.type === 'failure'
 })
 
-// 获取响应体文本
-const responseBodyText = computed(() => {
-  if (props.response.type === 'success' || props.response.type === 'failure') {
-    return new TextDecoder().decode(props.response.body)
+// 使用 ref 存放编辑器要显示的内容，这个 ref 是可写的
+const editorContent = ref('');
+
+// 监听 props.response 对象的整体变化
+// 将之前的 watch 代码块替换为以下代码块
+watch(() => props.response, (newResponse) => { // <-- 监听整个 newResponse 对象
+  // 在这里使用类型守卫检查类型
+  if (newResponse.type === 'success' || newResponse.type === 'failure') {
+    // 现在 TypeScript 知道 newResponse 是 DHttpSuccessResponse 或 DHttpFailureResponse，都有 body 属性
+    editorContent.value = new TextDecoder().decode(newResponse.body);
+  } else {
+    // 处理其他类型，这些类型没有 body 属性
+    editorContent.value = ''; // 清空编辑器内容
   }
-  return ''
-})
+}, { deep: true, immediate: true }); // deep: true 如果 response 对象内部深层属性变化也触发，immediate: true 初始执行
 
 const copyResponse = async () => {
-  const success = await copyToClipboard(responseBodyText.value)
+  const success = await copyToClipboard(editorContent.value)
   if (success) {
     copyIcon.value = IconCheck
     setTimeout(() => {
@@ -77,11 +86,24 @@ const copyResponse = async () => {
 const lineWrapping = ref(true)
 const toggleWrapLines = () => {
   lineWrapping.value = !lineWrapping.value
+  prettifyRequestBody()
+}
+
+const prettifyRequestBody = () => {
+  let prettifyBody = ''
+  try {
+    // 对当前的 editorContent.value 进行格式化
+    prettifyBody = prettifyJSONC(editorContent.value as string)
+    // 更新 editorContent 的值为格式化后的文本
+    editorContent.value = prettifyBody
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 // CodeMirror 集成
 const jsonResponse = ref<HTMLElement>()
-const { view } = useCodemirror(jsonResponse, responseBodyText, {
+const { view } = useCodemirror(jsonResponse, editorContent, {
   langMime: 'application/json',
   lineWrapping: lineWrapping.value,
   readOnly: !props.isEditable,

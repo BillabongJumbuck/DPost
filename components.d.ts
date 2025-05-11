@@ -58,4 +58,7 @@ declare module 'vue' {
     Windows: typeof import('./src/components/Hopp/Windows.vue')['default']
     XMLLensRenderer: typeof import('./src/components/Lenses/XMLLensRenderer.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

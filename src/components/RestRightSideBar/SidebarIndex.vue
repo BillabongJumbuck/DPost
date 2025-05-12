@@ -25,6 +25,20 @@
         :request="currentTab"
       />
     </HoppTab>
+    <HoppTab id="document" label="文档" :icon="IconFileType2">
+      <div
+        class="flex items-center overflow-x-auto whitespace-nowrap border-b border-dividerLight px-4 py-2 text-tiny text-secondaryLight"
+      >
+        <span class="truncate"> 请求 </span>
+        <ChevronRight class="mx-2 h-4 w-4"></ChevronRight>
+        文档生成
+      </div>
+      <DocumentGen
+        v-if="selectedNavigationTab === 'document'"
+        class="px-4 mt-4"
+        :request="currentTab">
+      </DocumentGen>
+    </HoppTab>
   </HoppTabs>
 </template>
 
@@ -34,11 +48,14 @@ import { ChevronRight } from 'lucide-vue-next'
 import { FolderIcon as IconFolder } from 'lucide-vue-next'
 import { Share2Icon as IconShare2 } from 'lucide-vue-next'
 import { CodeIcon as IconCode } from 'lucide-vue-next'
+import { FileType2 as IconFileType2 } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import HttpCodegen from './Codegen.vue'
 import type { DHttpRequestDoc } from '@/utility/model'
+import Collections from './Collections.vue'
+import DocumentGen from '@/components/RestRightSideBar/DocumentGen.vue'
 
-type RequestOptionTabs = 'collections' | 'share-request' | 'codegen'
+type RequestOptionTabs = 'collections' | 'share-request' | 'codegen' | 'document'
 
 const props = defineProps<{
   currentTab: DHttpRequestDoc | null

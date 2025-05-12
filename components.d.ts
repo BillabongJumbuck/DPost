@@ -13,6 +13,8 @@ declare module 'vue' {
     ButtonPrimary: typeof import('./src/components/Hopp/ButtonPrimary.vue')['default']
     ButtonSecondary: typeof import('./src/components/Hopp/ButtonSecondary.vue')['default']
     Codegen: typeof import('./src/components/RestRightSideBar/Codegen.vue')['default']
+    Collections: typeof import('./src/components/RestRightSideBar/Collections.vue')['default']
+    DocumentGen: typeof import('./src/components/RestRightSideBar/DocumentGen.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']

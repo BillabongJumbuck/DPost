@@ -1,5 +1,4 @@
 import type { DHttpKeyValueDoc } from '@/utility/model/DHttpKeyValueDoc.ts'
-import type { DHttpRequestDoc } from '@/utility/model/DHttpRequestDoc.ts'
 
 export type DHttpSuccessResponse = {
   type: 'success'
@@ -11,7 +10,7 @@ export type DHttpSuccessResponse = {
     responseSize: number // in bytes
     responseDuration: number // in millis
   }
-  req: DHttpRequestDoc
+  // req: DHttpRequestDoc
 }
 
 export type DHttpFailureResponse = {
@@ -24,13 +23,13 @@ export type DHttpFailureResponse = {
     responseSize: number // in bytes
     responseDuration: number // in millis
   }
-  req: DHttpRequestDoc
+  // req: DHttpRequestDoc
 }
 
 export type DHttpFailureNetwork = {
   type: 'network_fail'
   error: unknown
-  req: DHttpRequestDoc
+  // req: DHttpRequestDoc
 }
 
 export type DHttpFailureScript = {
@@ -40,7 +39,7 @@ export type DHttpFailureScript = {
 
 export type DHttpLoadingResponse = {
   type: 'loading'
-  req: DHttpRequestDoc
+  // req: DHttpRequestDoc
 }
 
 export type DHttpResponse =

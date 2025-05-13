@@ -138,7 +138,7 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
           responseSize,
           responseDuration: responseTime,
         },
-        req: request,
+        // req: request,
       } satisfies DHttpSuccessResponse
     } else {
       return {
@@ -151,7 +151,7 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
           responseSize,
           responseDuration: responseTime,
         },
-        req: request,
+       // req: request,
       } satisfies DHttpFailureResponse
     }
   } catch (error: unknown) {
@@ -176,14 +176,14 @@ export const sendHttpRequest = async (request: DHttpRequestDoc): Promise<DHttpRe
           responseSize,
           responseDuration: responseTime,
         },
-        req: request,
+        // req: request,
       } satisfies DHttpFailureResponse
     } else if (axios.isAxiosError(error)) {
       // Handle network errors
       return {
         type: 'network_fail',
         error: error.message || 'Network error',
-        req: request,
+        // req: request,
       } satisfies DHttpFailureNetwork
     } else {
       // Handle unexpected errors (e.g., scripting errors)

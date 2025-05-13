@@ -202,7 +202,8 @@ export const codegen = async (requestDoc: DHttpRequestDoc, codeType: string): Pr
   // *** 定义后端 API 的完整 URL ***
   const backendUrl = 'http://localhost:3001/api/generate-client'; // <<< *** 请确保这里的 URL 与你的后端服务地址端口一致 ***
 
-  const reqBody = { requestDesc: requestDoc, techStack: codeType };
+  const reqBody = { requestDesc: toRaw(requestDoc), techStack: codeType };
+  console.log('打印raw', reqBody);
   try {
     // 将 DHttpRequestDoc 对象作为请求体发送
     const response = await axios.post(backendUrl, reqBody);

@@ -11,6 +11,10 @@
           v-model="editingName"
           class="flex-grow"
           placeholder=" "
+          :id = "timestamp().toString()"
+          type="text"
+          :autofocus="true"
+          :style="''"
           :label="'标签'"
           input-styles="floating-input"
           @submit="editRequest"
@@ -41,7 +45,7 @@
 <script setup lang="ts">
 import { HoppButtonSecondary, Hoppinput, HoppButtonPrimary} from '@/components/Hopp'
 import { HoppModal } from '@/components/Hopp/modal/index.ts'
-import { useVModel } from "@vueuse/core"
+import { timestamp, useVModel } from '@vueuse/core'
 import { ref, watch } from "vue"
 
 

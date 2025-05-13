@@ -1,5 +1,6 @@
 import type { DHttpRequestDoc } from '@/utility/model';
 import axios from 'axios';
+import { toRaw } from 'vue'
 
 /**
  * 通过调用后端 API 生成 API 文档。
@@ -16,10 +17,11 @@ export const docegen = async (requestDoc: DHttpRequestDoc): Promise<string | Err
 
   // 构建请求体，包含请求描述和所需的格式
   const reqBody = {
-    requestDesc: requestDoc,
+    requestDesc: toRaw(requestDoc),
     format: 'markdown'
   };
 
+  console.log(reqBody)
   try {
     // 将请求体发送到后端
     const response = await axios.post(backendUrl, reqBody);

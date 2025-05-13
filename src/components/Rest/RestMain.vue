@@ -103,9 +103,9 @@ watch(selectedTabId, (newVal) => {
 const openNewTab = () => {
   const newTab: tabType = {
     id: Date.now().toString(),
-    name: '获取用户列表',
+    name: '获取天气信息',
     isDirty: false,
-    url: 'https://api.example.com/users',
+    url: 'https://restapi.amap.com/v3/weather/weatherInfo',
     method: DHttpMethodType.GET,
     body: {
       contentType: null,
@@ -169,7 +169,7 @@ const handleHeadersUpdate = (headers: DHttpKeyValueDoc[]) => {
 const handleRequestSend = () => {
   currentTab.value.response = {
     type: 'loading',
-    req: currentTab.value,
+    // req: currentTab.value,
   }
   sendHttpRequest(currentTab.value).then((response) => {
     console.log(response)

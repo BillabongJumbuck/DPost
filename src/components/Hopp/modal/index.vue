@@ -72,7 +72,7 @@ import {
   ref,
   useSlots,
 } from "vue"
-import { HOPP_UI_OPTIONS, HoppUIPluginOptions } from "./plugin"
+import { HOPP_UI_OPTIONS, type HoppUIPluginOptions } from "./plugin"
 import Heading from "./Heading.vue"
 
 const { onModalOpen, onModalClose } =

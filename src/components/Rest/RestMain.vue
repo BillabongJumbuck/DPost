@@ -8,7 +8,8 @@
     :render-inactive-tabs="false"
     :can-add-new-tab="true"
     :new-text="null"
-    :close-text="null"       >
+    :close-text="null"
+  >
     <HoppWindow
       :selected="true"
       :close-visibility="'hover'"
@@ -20,8 +21,12 @@
       :info="null"
     >
       <template #tabhead>
-        <HttpTabHead :tab="tab" :is-removable="tabs.length > 1" @close-tab="removeTab(tab.id)"
-                     @open-rename-modal="openReqRenameModal(tab.id)"/>
+        <HttpTabHead
+          :tab="tab"
+          :is-removable="tabs.length > 1"
+          @close-tab="removeTab(tab.id)"
+          @open-rename-modal="openReqRenameModal(tab.id)"
+        />
       </template>
       <template #suffix>
         <span
@@ -180,55 +185,112 @@ const handleRequestSend = () => {
 // *** 完成 requestToRename computed 属性 ***
 const requestToRename = computed(() => {
   // 返回 tabIdToRename 对应的 tab 对象
-  return tabs.value.find(tab => tab.id === tabIdToRename.value) || null; // 返回找到的对象或 null
+  return tabs.value.find((tab) => tab.id === tabIdToRename.value) || null // 返回找到的对象或 null
 })
 
 // *** 完成 openReqRenameModal 函数 ***
 const openReqRenameModal = (tabID: string) => {
   // 存储要重命名的 tab 的 ID
-  tabIdToRename.value = tabID;
+  tabIdToRename.value = tabID
 
   // 找到对应的 tab 对象，并将其当前名称赋值给 reqName
-  const tabToRename = tabs.value.find(tab => tab.id === tabID);
+  const tabToRename = tabs.value.find((tab) => tab.id === tabID)
   if (tabToRename) {
-    reqName.value = tabToRename.name;
+    reqName.value = tabToRename.name
   } else {
     // 如果没找到，给个默认空值，并记录错误
-    reqName.value = '';
-    console.error('尝试打开重命名模态框的标签页不存在:', tabID);
+    reqName.value = ''
+    console.error('尝试打开重命名模态框的标签页不存在:', tabID)
   }
 
   // 显示模态框
-  showRenamingReqNameModal.value = true;
+  showRenamingReqNameModal.value = true
 }
 
 // *** 完成 renameReqName 函数 ***
 const renameReqName = (newName: string) => {
   // 使用 tabIdToRename 找到需要重命名的 tab 对象
-  const tabToRename = tabs.value.find(tab => tab.id === tabIdToRename.value);
+  const tabToRename = tabs.value.find((tab) => tab.id === tabIdToRename.value)
 
   // 简单的验证，TabRename 组件内部也做了，这里可以双重保障
   if (!newName.trim()) {
-    console.warn('标签页名称不能为空');
+    console.warn('标签页名称不能为空')
     // 这里不关闭模态框，让用户继续编辑
-    return;
+    return
   }
-
 
   if (tabToRename) {
     // 更新 tab 的 name 属性
-    tabToRename.name = newName.trim();
-    tabToRename.isDirty = true; // 名称改变也标记为 dirty
-    console.log(`标签页 ${tabToRename.id} 已重命名为 "${tabToRename.name}"`);
+    tabToRename.name = newName.trim()
+    tabToRename.isDirty = true // 名称改变也标记为 dirty
+    console.log(`标签页 ${tabToRename.id} 已重命名为 "${tabToRename.name}"`)
   } else {
-    console.error('尝试保存重命名的标签页不存在:', tabIdToRename.value);
+    console.error('尝试保存重命名的标签页不存在:', tabIdToRename.value)
   }
 
   // 隐藏模态框并重置状态 (TabRename 也 emit hide-modal，这里监听也可以)
-  showRenamingReqNameModal.value = false;
-  tabIdToRename.value = null; // 重置 ID
-  reqName.value = ''; // 清空输入框，虽然 hideModal 也做了，但这里显式清空更清晰
+  showRenamingReqNameModal.value = false
+  tabIdToRename.value = null // 重置 ID
+  reqName.value = '' // 清空输入框，虽然 hideModal 也做了，但这里显式清空更清晰
 }
-</script>
 
+// 处理创建新标签页
+const handleCreateNewTab = (tabData: {
+  name: string
+  url: string
+  method: DHttpMethodType
+  headers: DHttpKeyValueDoc[]
+  queryParams: DHttpKeyValueDoc[]
+  body: {
+    contentType: string | null
+    bodyContent: string | null
+  }
+}) => {
+  console.log('开始创建新标签页，接收到的数据:', tabData)
+
+  const newTab: DHttpRequestDoc = {
+    id: Date.now().toString(),
+    name: tabData.name,
+    isDirty: false,
+    url: tabData.url,
+    method: tabData.method,
+    body: {
+      contentType: tabData.body.contentType,
+      bodyContent: tabData.body.bodyContent,
+    },
+    response: null,
+    headers: tabData.headers,
+    queryParams: tabData.queryParams,
+  }
+
+  console.log('创建的新标签页对象:', newTab)
+  console.log('当前标签页列表:', tabs.value)
+
+  // 添加新标签页并选中它
+  tabs.value = [...tabs.value, newTab]
+  selectedTabId.value = newTab.id
+
+  console.log('更新后的标签页列表:', tabs.value)
+  console.log('当前选中的标签页ID:', selectedTabId.value)
+}
+
+// 添加 watch 来监听 tabs 的变化
+watch(
+  tabs,
+  (newTabs) => {
+    console.log('标签页列表发生变化:', newTabs)
+  },
+  { deep: true },
+)
+
+// 添加 watch 来监听 selectedTabId 的变化
+watch(selectedTabId, (newId) => {
+  console.log('选中的标签页ID发生变化:', newId)
+})
+
+// 暴露方法给父组件调用
+defineExpose({
+  handleCreateNewTab,
+})
+</script>
 <style scoped></style>

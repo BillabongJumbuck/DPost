@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios from 'axios'
 import type { DHttpRequestDoc } from '@/utility/model'
 import { toRaw } from 'vue'
+import { API_ENDPOINTS } from '@/config/api'
 // Code Generation is Powered by HTTPSnippet (https://github.com/Kong/httpsnippet)
 // If you want to add support for your favorite language/library, please contribute to the HTTPSnippet repo <3
 /**
@@ -196,80 +197,85 @@ export type CodegenName = (typeof CodegenDefinitions)[number]['name']
  * @param codeType 目标代码类型
  * @returns 一个 Promise，resolve 时返回生成的代码字符串，reject 时返回一个 Error 对象。
  */
-export const codegen = async (requestDoc: DHttpRequestDoc, codeType: string): Promise<string | Error> => {
-  console.log('codegen: 正在调用后端 API 生成代码...');
+export const codegen = async (
+  requestDoc: DHttpRequestDoc,
+  codeType: string,
+): Promise<string | Error> => {
+  console.log('codegen: 正在调用后端 API 生成代码...')
 
-  // *** 定义后端 API 的完整 URL ***
-  const backendUrl = 'http://localhost:3001/api/generate-client'; // <<< *** 请确保这里的 URL 与你的后端服务地址端口一致 ***
-
-  const reqBody = { requestDesc: toRaw(requestDoc), techStack: codeType };
-  console.log('打印raw', reqBody);
+  const reqBody = { requestDesc: toRaw(requestDoc), techStack: codeType }
+  console.log('打印raw', reqBody)
   try {
-    // 将 DHttpRequestDoc 对象作为请求体发送
-    const response = await axios.post(backendUrl, reqBody);
+    // 使用配置的 API 端点
+    const response = await axios.post(API_ENDPOINTS.generateCode, reqBody)
 
     // 检查后端响应状态码 (通常 2xx 表示成功)
     if (response.status >= 200 && response.status < 300) {
-      console.log('codegen: 后端响应成功接收.');
-      const responseData = response.data; // 获取完整的响应体
+      console.log('codegen: 后端响应成功接收.')
+      const responseData = response.data // 获取完整的响应体
 
       // *** 修改此处以处理新的响应格式 ***
       // 检查 success 标志和 data 结构
-      if (responseData && responseData.success === true &&
-        responseData.data && typeof responseData.data.clientCode === 'string') {
-        console.log('codegen: 从后端接收到生成的代码.');
-        return responseData.data.clientCode; // *** 成功时，返回生成的代码字符串 ***
+      if (
+        responseData &&
+        responseData.success === true &&
+        responseData.data &&
+        typeof responseData.data.clientCode === 'string'
+      ) {
+        console.log('codegen: 从后端接收到生成的代码.')
+        return responseData.data.clientCode // *** 成功时，返回生成的代码字符串 ***
       } else {
         // 后端返回成功状态码，但数据格式不对或 success 为 false
-        console.error('codegen: 后端返回成功状态，但数据格式异常或 success 为 false:', responseData);
+        console.error('codegen: 后端返回成功状态，但数据格式异常或 success 为 false:', responseData)
         // *** 返回一个 Error 对象表示失败 ***
-        const errorMessage = responseData && (responseData.error || responseData.details) ?
-          (responseData.error + (responseData.details ? ` (${responseData.details})` : '')) :
-          '未知错误或后端指示生成失败';
-        return new Error(`代码生成失败: ${errorMessage}. 响应: ${JSON.stringify(responseData)}`);
+        const errorMessage =
+          responseData && (responseData.error || responseData.details)
+            ? responseData.error + (responseData.details ? ` (${responseData.details})` : '')
+            : '未知错误或后端指示生成失败'
+        return new Error(`代码生成失败: ${errorMessage}. 响应: ${JSON.stringify(responseData)}`)
       }
     } else {
       // 理论上 axios 对非 2xx 状态码会抛出错误，所以这个 else 分支不一定能走到
       // 但作为备用处理，如果 axios 配置了不抛异常，可以在此处理非 2xx 响应
-      console.error('codegen: 后端返回非 2xx 状态码:', response.status, response.data);
-      const errorData = response.data;
-      const errorMessage = errorData && (errorData.error || errorData.details) ?
-        (errorData.error + (errorData.details ? ` (${errorData.details})` : '')) :
-        `未知错误 (状态码: ${response.status})`;
+      console.error('codegen: 后端返回非 2xx 状态码:', response.status, response.data)
+      const errorData = response.data
+      const errorMessage =
+        errorData && (errorData.error || errorData.details)
+          ? errorData.error + (errorData.details ? ` (${errorData.details})` : '')
+          : `未知错误 (状态码: ${response.status})`
       // *** 返回一个 Error 对象表示失败 ***
-      return new Error(`代码生成失败 (后端错误 ${response.status}): ${errorMessage}`);
+      return new Error(`代码生成失败 (后端错误 ${response.status}): ${errorMessage}`)
     }
-
   } catch (error) {
     // *** 捕获 axios 请求过程中发生的错误 (网络错误, 非 2xx 状态码导致的 axios 抛错等) ***
-    console.error('codegen: 调用后端 API 失败:', error);
-    let errorMessage = '代码生成请求失败.';
+    console.error('codegen: 调用后端 API 失败:', error)
+    let errorMessage = '代码生成请求失败.'
 
     if (axios.isAxiosError(error)) {
       // Axios 错误处理
       if (error.response) {
         // 后端有响应，但状态码是错误 (非 2xx)
-        console.error('codegen: 错误响应数据:', error.response.data);
-        const errorData = error.response.data;
+        console.error('codegen: 错误响应数据:', error.response.data)
+        const errorData = error.response.data
         // 尝试从后端错误响应中提取错误信息
         errorMessage = `代码生成失败 (后端错误 ${error.response.status}): ${
-          errorData && (errorData.error || errorData.details) ?
-            (errorData.error + (errorData.details ? ` (${errorData.details})` : '')) :
-            error.message || '未知后端错误'
-        }`;
+          errorData && (errorData.error || errorData.details)
+            ? errorData.error + (errorData.details ? ` (${errorData.details})` : '')
+            : error.message || '未知后端错误'
+        }`
       } else if (error.request) {
         // 请求发出去了，但没有收到响应 (很可能是网络问题或后端未运行)
-        console.error('codegen: 错误请求:', error.request);
-        errorMessage = `代码生成失败 (网络错误): ${error.message || '无法连接到后端服务.'}`;
+        console.error('codegen: 错误请求:', error.request)
+        errorMessage = `代码生成失败 (网络错误): ${error.message || '无法连接到后端服务.'}`
       } else {
         // Something else happened while setting up the request
-        errorMessage = `代码生成失败 (请求错误): ${error.message}`;
+        errorMessage = `代码生成失败 (请求错误): ${error.message}`
       }
     } else {
       // 非 Axios 错误
-      errorMessage = `代码生成失败 (未知错误): ${String(error)}`;
+      errorMessage = `代码生成失败 (未知错误): ${String(error)}`
     }
     // *** 返回一个 Error 对象表示失败 ***
-    return new Error(errorMessage);
+    return new Error(errorMessage)
   }
-};
+}

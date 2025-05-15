@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { DHttpMethodType, type DHttpKeyValueDoc } from '@/utility/model'
+import { API_ENDPOINTS } from '@/config/api'
 
 // 接口响应类型定义
 interface HarRequest {
@@ -76,13 +77,11 @@ export async function generateApiTest(input: string): Promise<{
     bodyContent: string | null
   }
 }> {
-  const url = 'http://localhost:3001/api/generate-har'
-
   try {
     const cleanedInput = cleanInput(input)
 
     const response = await axios.post<GenerateHarResponse>(
-      url,
+      API_ENDPOINTS.generateTest,
       {
         input: cleanedInput,
       },

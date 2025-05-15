@@ -1,13 +1,25 @@
 <template>
   <div class="flex flex-col">
-    <div class="mt-4 relative docgen-loading-container" v-loading="isLoading" element-loading-text="正在生成API文档...">
+    <div class="flex items-center justify-between mb-4">
+      <label class="truncate font-semibold text-secondaryLight">API 文档生成</label>
+      <HoppButtonSecondary :label="'生成文档'" :icon="IconFileType2" @click="handleGenerate" />
+    </div>
+
+    <div
+      class="mt-4 relative docgen-loading-container"
+      v-loading="isLoading"
+      element-loading-text="正在生成API文档..."
+    >
       <div
         v-if="errorState"
         class="w-full overflow-auto whitespace-normal rounded bg-primaryLight px-4 py-2 font-mono text-red-400"
       >
         {{ outputContent }}
       </div>
-      <div v-else-if="!errorState && renderedHtmlContent" class="rounded border border-dividerLight">
+      <div
+        v-else-if="!errorState && renderedHtmlContent"
+        class="rounded border border-dividerLight"
+      >
         <div class="flex items-center justify-between pl-4 border-b border-dividerLight">
           <label class="truncate font-semibold text-secondaryLight py-2"> API 文档 </label>
           <div class="flex items-center">
@@ -20,9 +32,13 @@
           </div>
         </div>
         <div class="p-4 docgen-content-html">
-          <div v-html="renderedHtmlContent"></div> </div>
+          <div v-html="renderedHtmlContent"></div>
+        </div>
       </div>
-      <div v-else class="mt-4 w-full overflow-auto whitespace-normal rounded bg-primaryLight px-4 py-2 font-mono text-secondaryLight">
+      <div
+        v-else
+        class="mt-4 w-full overflow-auto whitespace-normal rounded bg-primaryLight px-4 py-2 font-mono text-secondaryLight"
+      >
         // 请先选择一个请求来生成文档
       </div>
     </div>
@@ -30,104 +46,103 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from 'vue';
-import { HoppButtonSecondary } from '@/components/Hopp';
-import { docegen } from '@/utility/helper/Docgen';
-import type { DHttpRequestDoc } from '@/utility/model';
-
-import { marked } from 'marked';
-import { CopyIcon as IconCopy, CheckIcon as IconCheck } from 'lucide-vue-next';
-import { copyToClipboard } from '@/utility/helper/clipboards';
-
+import { ref, onMounted } from 'vue'
+import { HoppButtonSecondary } from '@/components/Hopp'
+import { docegen } from '@/utility/helper/Docgen'
+import type { DHttpRequestDoc } from '@/utility/model'
+import { FileType2 as IconFileType2 } from 'lucide-vue-next'
+import { marked } from 'marked'
+import { CopyIcon as IconCopy, CheckIcon as IconCheck } from 'lucide-vue-next'
+import { copyToClipboard } from '@/utility/helper/clipboards'
 
 const props = defineProps<{
   request: DHttpRequestDoc | null
-}>();
+}>()
 
 // 状态变量
-const rawMarkdownContent = ref('');
-const renderedHtmlContent = ref('');
-const outputContent = ref('');
-const isLoading = ref(false);
-const errorState = ref(false);
-const copyIcon = ref(IconCopy);
-
+const rawMarkdownContent = ref('')
+const renderedHtmlContent = ref('')
+const outputContent = ref('')
+const isLoading = ref(false)
+const errorState = ref(false)
+const copyIcon = ref(IconCopy)
 
 // --- 辅助函数：生成文档并处理结果 ---
 const generateAndDisplayDoc = async (request: DHttpRequestDoc | null) => {
-  console.log('docgenViewer: 尝试生成文档...');
+  console.log('docgenViewer: 尝试生成文档...')
 
-  isLoading.value = true;
-  errorState.value = false;
-  rawMarkdownContent.value = '';
-  renderedHtmlContent.value = '';
-  outputContent.value = '';
-
+  isLoading.value = true
+  errorState.value = false
+  rawMarkdownContent.value = ''
+  renderedHtmlContent.value = ''
+  outputContent.value = ''
 
   if (!request) {
-    console.log('docgenViewer: 没有选中的请求，无法生成文档。');
-    outputContent.value = '// 请先选择一个请求来生成文档';
-    isLoading.value = false;
-    return;
+    console.log('docgenViewer: 没有选中的请求，无法生成文档。')
+    outputContent.value = '// 请先选择一个请求来生成文档'
+    isLoading.value = false
+    return
   }
 
   try {
-    const docOrError = await docegen(request);
+    const docOrError = await docegen(request)
 
     if (docOrError instanceof Error) {
-      console.error('docgenViewer: 文档生成失败:', docOrError);
-      errorState.value = true;
-      outputContent.value = `// 文档生成失败: ${docOrError.message}`;
-      renderedHtmlContent.value = '';
+      console.error('docgenViewer: 文档生成失败:', docOrError)
+      errorState.value = true
+      outputContent.value = `// 文档生成失败: ${docOrError.message}`
+      renderedHtmlContent.value = ''
     } else {
-      console.log('docgenViewer: 文档生成成功。');
-      rawMarkdownContent.value = docOrError;
+      console.log('docgenViewer: 文档生成成功。')
+      rawMarkdownContent.value = docOrError
 
       // 使用 marked 库将 Markdown 异步渲染为 HTML 并等待结果
-      renderedHtmlContent.value = await marked.parse(rawMarkdownContent.value);
+      renderedHtmlContent.value = await marked.parse(rawMarkdownContent.value)
 
-      errorState.value = false;
-      outputContent.value = '';
+      errorState.value = false
+      outputContent.value = ''
 
-      console.log('docgenViewer: 生成的文档内容已显示.');
+      console.log('docgenViewer: 生成的文档内容已显示.')
     }
   } catch (err) {
-    console.error('docgenViewer: 在 generateAndDisplayDoc 中发生意外错误:', err);
-    errorState.value = true;
-    outputContent.value = `// 发生意外错误: ${err instanceof Error ? err.message : String(err)}`;
-    renderedHtmlContent.value = '';
+    console.error('docgenViewer: 在 generateAndDisplayDoc 中发生意外错误:', err)
+    errorState.value = true
+    outputContent.value = `// 发生意外错误: ${err instanceof Error ? err.message : String(err)}`
+    renderedHtmlContent.value = ''
   } finally {
-    isLoading.value = false;
-    console.log('docgenViewer: 文档生成调用完成.');
+    isLoading.value = false
+    console.log('docgenViewer: 文档生成调用完成.')
   }
-};
+}
 
-// --- Watcher ---
-watch(
-  () => props.request,
-  (newRequest) => {
-    console.log('docgenViewer: 请求 prop 变化:', newRequest ? newRequest.id : 'null');
-    nextTick(() => {
-      generateAndDisplayDoc(newRequest);
-    });
-  },
-  { deep: true, immediate: true }
-);
+// 组件挂载时触发一次生成
+onMounted(async () => {
+  console.log('DocgenViewer 组件已挂载，执行初始生成')
+  if (props.request) {
+    await generateAndDisplayDoc(props.request)
+  }
+})
 
-onMounted(() => {
-  console.log('DocgenViewer 组件已挂载.');
-});
+// 手动触发生成
+const handleGenerate = async () => {
+  if (!props.request) {
+    console.log('docgenViewer: 没有选中的请求，无法生成文档。')
+    outputContent.value = '// 请先选择一个请求来生成文档'
+    return
+  }
+  await generateAndDisplayDoc(props.request)
+}
 
 // --- 复制文档内容函数 ---
 const copyDocumentation = async () => {
-  const success = await copyToClipboard(renderedHtmlContent.value);
+  const success = await copyToClipboard(renderedHtmlContent.value)
   if (success) {
-    copyIcon.value = IconCheck;
+    copyIcon.value = IconCheck
     setTimeout(() => {
-      copyIcon.value = IconCopy;
-    }, 2000);
+      copyIcon.value = IconCopy
+    }, 2000)
   }
-};
+}
 </script>
 
 <style>
@@ -187,7 +202,6 @@ const copyDocumentation = async () => {
   font-weight: bold;
 }
 
-
 /* 段落样式 */
 .docgen-content-html :deep(p) {
   margin-bottom: 1em;
@@ -243,7 +257,6 @@ const copyDocumentation = async () => {
   font-size: 1em; /* 相对于父元素 pre 的大小 */
 }
 
-
 /* 表格样式 */
 .docgen-content-html :deep(table) {
   width: 100%;
@@ -296,5 +309,4 @@ const copyDocumentation = async () => {
   display: block; /* 使图片独占一行 */
   margin: 1em 0;
 }
-
 </style>

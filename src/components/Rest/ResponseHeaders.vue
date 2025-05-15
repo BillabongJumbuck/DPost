@@ -3,9 +3,7 @@
     <div
       class="sticky top-lowerSecondaryStickyFold z-10 flex flex-shrink-0 items-center justify-between overflow-x-auto border-b border-dividerLight bg-primary pl-4"
     >
-      <label class="truncate font-semibold text-secondaryLight">
-        响应头
-      </label>
+      <label class="truncate font-semibold text-secondaryLight"> 响应头 </label>
       <div class="flex">
         <HoppButtonSecondary
           v-tippy="{ theme: 'tooltip' }"
@@ -35,10 +33,7 @@ const props = defineProps<{
   isEditable: boolean
 }>()
 
-const copyHeaders = () => { }
+const copyHeaders = () => {}
 </script>
 
-
-<style scoped>
-
-</style>
+<style scoped></style>

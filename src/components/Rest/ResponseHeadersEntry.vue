@@ -1,20 +1,12 @@
 <template>
-  <div
-    class="group flex divide-x divide-dividerLight border-b border-dividerLight"
-  >
+  <div class="group flex divide-x divide-dividerLight border-b border-dividerLight">
     <span class="flex min-w-0 flex-1 transition group-hover:text-secondaryDark">
-      <span
-        class="select-all truncate rounded-sm py-2 pl-4"
-      >
+      <span class="select-all truncate rounded-sm py-2 pl-4">
         {{ headerKey }}
       </span>
     </span>
-    <span
-      class="flex min-w-0 flex-1 justify-between transition group-hover:text-secondaryDark"
-    >
-      <span
-        class="select-all truncate rounded-sm py-2 pl-4"
-      >
+    <span class="flex min-w-0 flex-1 justify-between transition group-hover:text-secondaryDark">
+      <span class="select-all truncate rounded-sm py-2 pl-4">
         {{ headerValue }}
       </span>
       <HoppButtonSecondary
@@ -30,14 +22,13 @@
 
 <script setup lang="ts">
 import { HoppButtonSecondary } from '@/components/Hopp'
-import { CopyIcon,} from 'lucide-vue-next'
+import { CopyIcon } from 'lucide-vue-next'
 import { copyToClipboard } from '@/utility/helper/clipboards.ts'
 
 const props = defineProps<{
   headerKey: string
   headerValue: string
 }>()
-
 
 const copyHeader = (headerValue: string) => {
   copyToClipboard(headerValue)
@@ -46,6 +37,4 @@ const copyHeader = (headerValue: string) => {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

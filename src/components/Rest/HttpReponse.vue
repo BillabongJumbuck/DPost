@@ -18,8 +18,7 @@
           :heading="'网络错误'"
           :text="'请检查你的网络连接'"
         >
-          <template #body>
-          </template>
+          <template #body> </template>
         </HoppPlaceholder>
 
         <div
@@ -48,7 +47,7 @@
         </div>
       </div>
     </div>
-    <ResponseBody :is-editable=false :response=response> </ResponseBody>
+    <ResponseBody :is-editable="false" :response="response"> </ResponseBody>
   </div>
 </template>
 

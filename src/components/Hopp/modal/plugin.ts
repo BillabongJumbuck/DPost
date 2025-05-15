@@ -1,14 +1,14 @@
-import type { Plugin, App } from "vue"
+import type { Plugin, App } from 'vue'
 
-import "@/assets/scss/styles.scss"
-import "@/assets/scss/tailwind.scss"
+import '@/assets/scss/styles.scss'
+import '@/assets/scss/tailwind.scss'
 
 /**
 @constant HOPP_UI_OPTIONS
 A constant representing the key for storing HoppUI plugin options in the global context.
 */
 
-export const HOPP_UI_OPTIONS = "HOPP_UI_OPTIONS"
+export const HOPP_UI_OPTIONS = 'HOPP_UI_OPTIONS'
 
 /**
 @typedef {Object} HoppUIPluginOptions

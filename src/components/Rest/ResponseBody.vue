@@ -17,15 +17,15 @@
         :is-editable="isEditable"
       />
     </HoppTab>
-        <HoppTab
-          v-if="maybeHeaders"
-          id="headers"
-          :label="'响应头'"
-          :info="`${maybeHeaders.length}`"
-          class="flex flex-1 flex-col"
-        >
-          <ResponseHeaders :headers="maybeHeaders!" :is-editable="false" />
-        </HoppTab>
+    <HoppTab
+      v-if="maybeHeaders"
+      id="headers"
+      :label="'响应头'"
+      :info="`${maybeHeaders.length}`"
+      class="flex flex-1 flex-col"
+    >
+      <ResponseHeaders :headers="maybeHeaders!" :is-editable="false" />
+    </HoppTab>
   </HoppTabs>
 </template>
 
@@ -66,7 +66,7 @@ watch(
 )
 
 const maybeHeaders = computed(() => {
-  if (!props.response || !(props.response.type === "success" || props.response.type === "failure"))
+  if (!props.response || !(props.response.type === 'success' || props.response.type === 'failure'))
     return null
   return props.response.headers
 })

@@ -1,14 +1,8 @@
 <template>
   <dialog ref="dialog">
     <Transition name="fade" appear @leave="onTransitionLeaveStart">
-      <div
-        ref="modal"
-        class="fixed inset-0 z-[1000] overflow-y-auto transition"
-        role="dialog"
-      >
-        <div
-          class="flex min-h-screen items-end justify-center text-center sm:!block"
-        >
+      <div ref="modal" class="fixed inset-0 z-[1000] overflow-y-auto transition" role="dialog">
+        <div class="flex min-h-screen items-end justify-center text-center sm:!block">
           <Transition name="fade" appear>
             <div
               class="fixed inset-0 transition-opacity"
@@ -64,19 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computed,
-  inject,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  useSlots,
-} from "vue"
-import { HOPP_UI_OPTIONS, type HoppUIPluginOptions } from "./plugin"
-import Heading from "./Heading.vue"
+import { computed, inject, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { HOPP_UI_OPTIONS, type HoppUIPluginOptions } from './plugin'
+import Heading from './Heading.vue'
 
-const { onModalOpen, onModalClose } =
-  inject<HoppUIPluginOptions>(HOPP_UI_OPTIONS) ?? {}
+const { onModalOpen, onModalClose } = inject<HoppUIPluginOptions>(HOPP_UI_OPTIONS) ?? {}
 
 withDefaults(
   defineProps<{
@@ -91,18 +77,18 @@ withDefaults(
   }>(),
   {
     dialog: false,
-    title: "",
+    title: '',
     dismissible: true,
-    placement: "top",
+    placement: 'top',
     fullWidth: false,
     fullWidthBody: false,
-    styles: "sm:max-w-lg",
+    styles: 'sm:max-w-lg',
     closeText: null,
   },
 )
 
 const emit = defineEmits<{
-  (e: "close"): void
+  (e: 'close'): void
 }>()
 
 onBeforeUnmount(() => {
@@ -125,15 +111,15 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener("keydown", onKeyDown)
+  document.removeEventListener('keydown', onKeyDown)
 })
 
 const close = () => {
-  emit("close")
+  emit('close')
 }
 
 const onKeyDown = (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
+  if (e.key === 'Escape') {
     e.preventDefault()
     close()
   }

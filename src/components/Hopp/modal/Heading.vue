@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="title"
-    class="flex items-center justify-between border-b border-dividerLight p-4"
-  >
+  <div v-if="title" class="flex items-center justify-between border-b border-dividerLight p-4">
     <div class="flex flex-1 items-center justify-start">
       <slot name="actions"></slot>
     </div>
@@ -24,10 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue"
-import { HOPP_UI_OPTIONS, type HoppUIPluginOptions } from "./plugin"
-import { XIcon as IconX } from "lucide-vue-next"
-import { HoppButtonSecondary } from "../index"
+import { inject } from 'vue'
+import { HOPP_UI_OPTIONS, type HoppUIPluginOptions } from './plugin'
+import { XIcon as IconX } from 'lucide-vue-next'
+import { HoppButtonSecondary } from '../index'
 
 const { t } = inject<HoppUIPluginOptions>(HOPP_UI_OPTIONS) ?? {}
 
@@ -38,10 +35,10 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: "close"): void
+  (e: 'close'): void
 }>()
 
 const close = () => {
-  emit("close")
+  emit('close')
 }
 </script>

@@ -1,14 +1,12 @@
-import { defineAsyncComponent } from "vue"
+import { defineAsyncComponent } from 'vue'
 import { isJSONContentType } from '@/utility/helper/contenttypes.ts'
-import { type Lens } from "./lenses"
+import { type Lens } from './lenses'
 
 const jsonLens: Lens = {
-  lensName: "JSON",
+  lensName: 'JSON',
   isSupportedContentType: isJSONContentType,
-  renderer: "json",
-  rendererImport: defineAsyncComponent(
-    () => import("@/components/Lenses/JSONLensRenderer.vue")
-  ),
+  renderer: 'json',
+  rendererImport: defineAsyncComponent(() => import('@/components/Lenses/JSONLensRenderer.vue')),
 }
 
 export default jsonLens

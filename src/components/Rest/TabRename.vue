@@ -1,17 +1,12 @@
 <template>
-  <HoppModal
-    v-if="show"
-    dialog
-    :title="'编辑请求'"
-    @close="hideModal"
-  >
+  <HoppModal v-if="show" dialog :title="'编辑请求'" @close="hideModal">
     <template #body>
       <div class="flex gap-1">
         <Hoppinput
           v-model="editingName"
           class="flex-grow"
           placeholder=" "
-          :id = "timestamp().toString()"
+          :id="timestamp().toString()"
           type="text"
           :autofocus="true"
           :style="''"
@@ -24,18 +19,8 @@
     <template #footer>
       <div class="flex justify-between items-center w-full">
         <div class="flex space-x-2">
-          <HoppButtonPrimary
-            :label="'保存'"
-            :loading="loadingState"
-            outline
-            @click="editRequest"
-          />
-          <HoppButtonSecondary
-            :label="'取消'"
-            outline
-            filled
-            @click="hideModal"
-          />
+          <HoppButtonPrimary :label="'保存'" :loading="loadingState" outline @click="editRequest" />
+          <HoppButtonSecondary :label="'取消'" outline filled @click="hideModal" />
         </div>
       </div>
     </template>
@@ -43,11 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { HoppButtonSecondary, Hoppinput, HoppButtonPrimary} from '@/components/Hopp'
+import { HoppButtonSecondary, Hoppinput, HoppButtonPrimary } from '@/components/Hopp'
 import { HoppModal } from '@/components/Hopp/modal/index.ts'
 import { timestamp, useVModel } from '@vueuse/core'
-import { ref, watch } from "vue"
-
+import { ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -58,17 +42,17 @@ const props = withDefaults(
   {
     show: false,
     loadingState: false,
-    modelValue: "",
-  }
+    modelValue: '',
+  },
 )
 
 const emit = defineEmits<{
-  (e: "submit", name: string): void
-  (e: "hide-modal"): void
-  (e: "update:modelValue", value: string): void
+  (e: 'submit', name: string): void
+  (e: 'hide-modal'): void
+  (e: 'update:modelValue', value: string): void
 }>()
 
-const editingName = useVModel(props, "modelValue")
+const editingName = useVModel(props, 'modelValue')
 
 watch(
   () => props.show,
@@ -76,7 +60,7 @@ watch(
     if (!newVal) {
       submittedFeedback.value = false
     }
-  }
+  },
 )
 
 const submittedFeedback = ref(false)
@@ -86,16 +70,16 @@ const editRequest = () => {
     return
   }
 
-  if (editingName.value.trim() === "") {
+  if (editingName.value.trim() === '') {
     // toast.error('非法名称')
     return
   }
 
-  emit("submit", editingName.value)
+  emit('submit', editingName.value)
 }
 
 const hideModal = () => {
-  editingName.value = ""
-  emit("hide-modal")
+  editingName.value = ''
+  emit('hide-modal')
 }
 </script>

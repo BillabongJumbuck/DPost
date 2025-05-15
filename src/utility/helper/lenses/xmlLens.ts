@@ -1,13 +1,11 @@
-import { defineAsyncComponent } from "vue"
-import { type Lens } from "./lenses"
+import { defineAsyncComponent } from 'vue'
+import { type Lens } from './lenses'
 
 const xmlLens: Lens = {
-  lensName: "XML",
+  lensName: 'XML',
   isSupportedContentType: (contentType) => /\bxml\b/i.test(contentType),
-  renderer: "xmlres",
-  rendererImport: defineAsyncComponent(
-    () => import("@/components/Lenses/XMLLensRenderer.vue")
-  ),
+  renderer: 'xmlres',
+  rendererImport: defineAsyncComponent(() => import('@/components/Lenses/XMLLensRenderer.vue')),
 }
 
 export default xmlLens

@@ -10,14 +10,21 @@
       />
     </div>
     <div class="button-area">
-      <el-button type="primary" @click="handleSend">生成API测试</el-button>
+      <el-button type="primary" @click="handleSend" :loading="loading">生成API测试</el-button>
+    </div>
+    <div
+      class="mt-4 relative ai-chat-loading-container"
+      v-loading="loading"
+      element-loading-text="正在生成API测试..."
+    >
+      <!-- 这里可以添加生成结果的显示区域 -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElInput, ElButton, ElMessage } from 'element-plus'
+import { ElInput, ElButton } from 'element-plus'
 import { generateApiTest } from '@/utility/helper/testgen'
 
 const apiDoc = ref('')
@@ -53,6 +60,16 @@ const handleSend = async () => {
 }
 </script>
 
+<style>
+/* 覆盖 el-loading-spinner 的定位样式 */
+.ai-chat-loading-container .el-loading-spinner {
+  top: 100px !important;
+  transform: translate(-50%, 0) !important;
+  left: 50% !important;
+  position: absolute !important;
+}
+</style>
+
 <style scoped>
 .ai-chat-container {
   padding: 16px;
@@ -69,5 +86,9 @@ const handleSend = async () => {
 .button-area {
   display: flex;
   justify-content: flex-end;
+}
+
+.relative {
+  position: relative;
 }
 </style>

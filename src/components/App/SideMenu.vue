@@ -15,6 +15,10 @@
         <el-icon><Link /></el-icon>
         <template #title>RESTFul</template>
       </el-menu-item>
+      <el-menu-item index="/auto">
+        <el-icon><Odometer /></el-icon>
+        <template #title>Auto</template>
+      </el-menu-item>
       <el-menu-item index="/setting">
         <el-icon><Setting /></el-icon>
         <template #title>Setting</template>
@@ -52,7 +56,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { ArrowLeftBold, ArrowRightBold, Link, Setting } from '@element-plus/icons-vue'
+import { ArrowLeftBold, ArrowRightBold, Link, Odometer, Setting } from '@element-plus/icons-vue'
 
 import { useRoute } from 'vue-router'
 const route = useRoute()

@@ -16,6 +16,7 @@
           v-bind="stepProps"
           @next="handleNext"
           @prev="handlePrev"
+          @uploaded="handleUploaded"
           @finish="handleFinish"
         />
       </div>
@@ -65,7 +66,8 @@ const steps: StepConfig[] = [
   },
 ]
 
-const activeStep = ref(0)
+const activeStep = ref(1)
+const testSpec = ref<any | null>(null)
 
 const currentComponent = computed(() => steps[activeStep.value].component)
 
@@ -92,6 +94,11 @@ const handlePrev = () => {
 
 const handleFinish = () => {
   console.log('流程完成', data)
+}
+
+const handleUploaded = (spec: unknown) => {
+  testSpec.value = spec
+  console.log('OpenAPI 规范已上传并解析', spec)
 }
 </script>
 

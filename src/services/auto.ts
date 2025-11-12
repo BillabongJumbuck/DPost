@@ -48,3 +48,102 @@ export async function forkRepository(
     throw new Error('Fork 仓库请求失败，请稍后重试')
   }
 }
+
+export type SubmitTestCasePayload = {
+  repo_url: string
+  org?: string
+  tech_stack: 'springboot_maven' | 'nodejs_express' | 'python_flask'
+  test_case_file: File | Blob
+}
+
+export type SubmitTestCaseResponse = {
+  status: 'ok'
+  message: string
+  file_path: string
+  repo_full_name: string
+  org?: string
+  tech_stack: string
+}
+
+export async function submitTestCase(
+  payload: SubmitTestCasePayload,
+): Promise<SubmitTestCaseResponse> {
+  try {
+    const formData = new FormData()
+    formData.append('repo_url', payload.repo_url)
+    if (payload.org) {
+      formData.append('org', payload.org)
+    }
+    formData.append('tech_stack', payload.tech_stack)
+    formData.append('test_case_file', payload.test_case_file, 'test-case.json')
+
+    const response = await fetch(buildURL('/repos/test'), {
+      method: 'POST',
+      body: formData,
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `提交测试用例失败（${response.status}）`
+      throw new Error(String(errorMessage))
+    }
+
+    return data as SubmitTestCaseResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('提交测试用例失败，请稍后重试')
+  }
+}
+
+export type UpdateTestCasePayload = SubmitTestCasePayload
+
+export type UpdateTestCaseResponse = {
+  status: 'ok'
+  message: string
+  file_path: string
+  repo_full_name: string
+  org?: string
+  tech_stack: string
+}
+
+export async function updateTestCase(
+  payload: UpdateTestCasePayload,
+): Promise<UpdateTestCaseResponse> {
+  try {
+    const formData = new FormData()
+    formData.append('repo_url', payload.repo_url)
+    if (payload.org) {
+      formData.append('org', payload.org)
+    }
+    formData.append('tech_stack', payload.tech_stack)
+    formData.append('test_case_file', payload.test_case_file, 'test-case.json')
+
+    const response = await fetch(buildURL('/repos/test'), {
+      method: 'PUT',
+      body: formData,
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `更新测试用例失败（${response.status}）`
+      throw new Error(String(errorMessage))
+    }
+
+    return data as UpdateTestCaseResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('更新测试用例失败，请稍后重试')
+  }
+}

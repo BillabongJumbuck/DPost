@@ -48,8 +48,54 @@
               {{ formatDate(scope.row.updatedAt) }}
             </template>
           </el-table-column>
+          <el-table-column label="操作" width="120" align="center" fixed="right">
+            <template #default="scope">
+              <el-button link type="primary" size="small" @click="openUpdateDialog(scope.row)">
+                更新用例
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
+
+      <!-- 更新测试用例对话框 -->
+      <el-dialog v-model="updateDialogVisible" title="更新测试用例" width="600px">
+        <div v-if="updatingConfig">
+          <div class="update-info">
+            <p><strong>仓库：</strong>{{ updatingConfig.repoDetails.repoName }}</p>
+            <p><strong>地址：</strong>{{ updatingConfig.repoDetails.repoURL }}</p>
+          </div>
+          <el-upload
+            ref="uploadRef"
+            class="update-upload"
+            drag
+            :auto-upload="false"
+            :multiple="false"
+            accept=".json,application/json"
+            :show-file-list="true"
+            :on-change="handleUpdateFileChange"
+            :limit="1"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">将新的 OpenAPI JSON 拖拽到此处，或 <em>点击上传</em></div>
+            <template #tip>
+              <div class="el-upload__tip">仅支持 .json；需包含 openapi/swagger 与 paths 字段</div>
+            </template>
+          </el-upload>
+          <div v-if="updateErrorMsg" class="error-text">{{ updateErrorMsg }}</div>
+        </div>
+        <template #footer>
+          <el-button @click="closeUpdateDialog">取消</el-button>
+          <el-button
+            type="primary"
+            :loading="isUpdating"
+            :disabled="!updateFile"
+            @click="handleUpdate"
+          >
+            确认更新
+          </el-button>
+        </template>
+      </el-dialog>
     </template>
 
     <template v-else>
@@ -67,8 +113,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { UploadFilled } from '@element-plus/icons-vue'
+import type { UploadFile, UploadRawFile } from 'element-plus'
 import AutoCreate from './Create.vue'
 import type { SummaryPayload } from './steps/StepSummary.vue'
+import { updateTestCase } from '@/services/auto'
 
 defineOptions({
   name: 'AutoIndex',
@@ -81,6 +130,14 @@ type CreatedConfig = SummaryPayload & {
 
 const isCreating = ref(false)
 const configs = ref<CreatedConfig[]>([])
+
+// 更新对话框相关状态
+const updateDialogVisible = ref(false)
+const updatingConfig = ref<CreatedConfig | null>(null)
+const updateFile = ref<File | null>(null)
+const updateErrorMsg = ref('')
+const isUpdating = ref(false)
+const uploadRef = ref()
 
 const startCreate = () => {
   isCreating.value = true
@@ -99,6 +156,86 @@ const handleCreated = (payload: SummaryPayload) => {
   configs.value = [newConfig, ...configs.value]
   isCreating.value = false
   ElMessage.success('自动化测试配置创建成功')
+}
+
+const openUpdateDialog = (config: CreatedConfig) => {
+  updatingConfig.value = config
+  updateFile.value = null
+  updateErrorMsg.value = ''
+  updateDialogVisible.value = true
+}
+
+const closeUpdateDialog = () => {
+  updateDialogVisible.value = false
+  updatingConfig.value = null
+  updateFile.value = null
+  updateErrorMsg.value = ''
+  if (uploadRef.value) {
+    uploadRef.value.clearFiles()
+  }
+}
+
+function validateOpenAPISpec(spec: unknown): string | null {
+  if (!spec || typeof spec !== 'object') return '文件内容不是有效的 JSON 对象'
+  const s = spec as { openapi?: unknown; swagger?: unknown; paths?: unknown }
+  const hasVersion = !!(s.openapi || s.swagger)
+  if (!hasVersion) return '缺少 openapi/swagger 字段'
+  if (!s.paths || typeof s.paths !== 'object') return '缺少 paths 字段'
+  return null
+}
+
+const handleUpdateFileChange = async (file: UploadFile) => {
+  updateErrorMsg.value = ''
+  updateFile.value = null
+
+  const raw = file.raw as UploadRawFile | undefined
+  if (!raw) {
+    updateErrorMsg.value = '无法读取文件'
+    return
+  }
+
+  try {
+    const text = await raw.text()
+    const json = JSON.parse(text)
+    const err = validateOpenAPISpec(json)
+    if (err) {
+      updateErrorMsg.value = err
+      return
+    }
+    updateFile.value = raw
+  } catch {
+    updateErrorMsg.value = 'JSON 解析失败，请检查文件内容'
+  }
+}
+
+const handleUpdate = async () => {
+  if (!updatingConfig.value || !updateFile.value || isUpdating.value) return
+
+  isUpdating.value = true
+  updateErrorMsg.value = ''
+
+  try {
+    await updateTestCase({
+      repo_url: updatingConfig.value.repoInfo.repoURL.trim(),
+      org: updatingConfig.value.repoInfo.org?.trim() || undefined,
+      tech_stack: updatingConfig.value.repoInfo.techStack as
+        | 'springboot_maven'
+        | 'nodejs_express'
+        | 'python_flask',
+      test_case_file: updateFile.value,
+    })
+
+    ElMessage.success('测试用例更新成功')
+    // 更新配置的更新时间
+    updatingConfig.value.updatedAt = new Date().toISOString()
+    closeUpdateDialog()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '更新测试用例失败，请稍后重试'
+    updateErrorMsg.value = message
+    ElMessage.error(message)
+  } finally {
+    isUpdating.value = false
+  }
 }
 
 const formatter = new Intl.DateTimeFormat('zh-CN', {
@@ -169,6 +306,28 @@ const formatDate = (iso: string) => formatter.format(new Date(iso))
 .create-tip {
   color: var(--el-text-color-secondary);
   font-size: 13px;
+}
+
+.update-info {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--el-fill-color-light);
+  border-radius: 4px;
+}
+
+.update-info p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.update-upload {
+  margin-top: 12px;
+}
+
+.error-text {
+  color: var(--el-color-danger);
+  font-size: 13px;
+  margin-top: 8px;
 }
 </style>
 

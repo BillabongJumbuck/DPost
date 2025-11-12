@@ -51,8 +51,13 @@
     </el-card>
 
     <div class="actions">
-      <el-button @click="emit('prev')">返回修改</el-button>
-      <el-button type="primary" :disabled="!testCases.length" @click="handleConfirm">
+      <el-button @click="emit('prev')" :disabled="isSubmitting">返回修改</el-button>
+      <el-button
+        type="primary"
+        :disabled="!testCases.length || isSubmitting"
+        :loading="isSubmitting"
+        @click="handleConfirm"
+      >
         确认并提交
       </el-button>
     </div>
@@ -60,7 +65,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { submitTestCase } from '@/services/auto'
 
 type RepoInfo = {
   name?: string
@@ -192,14 +199,44 @@ export type SummaryPayload = {
   spec: Record<string, unknown> | null
 }
 
-const handleConfirm = () => {
-  const payload: SummaryPayload = {
-    repoInfo: { ...props.repoInfo },
-    repoDetails: { ...repoDetails.value },
-    testCases: [...testCases.value],
-    spec: props.spec ?? null,
+const isSubmitting = ref(false)
+
+const handleConfirm = async () => {
+  if (!props.spec || isSubmitting.value) return
+
+  isSubmitting.value = true
+  try {
+    // 将 JSON spec 转换为 Blob 文件
+    const jsonString = JSON.stringify(props.spec, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+
+    // 调用 API 提交测试用例
+    await submitTestCase({
+      repo_url: props.repoInfo.repoURL.trim(),
+      org: props.repoInfo.org?.trim() || undefined,
+      tech_stack: props.repoInfo.techStack as
+        | 'springboot_maven'
+        | 'nodejs_express'
+        | 'python_flask',
+      test_case_file: blob,
+    })
+
+    ElMessage.success('测试用例提交成功')
+
+    // 成功后触发 finish 事件
+    const payload: SummaryPayload = {
+      repoInfo: { ...props.repoInfo },
+      repoDetails: { ...repoDetails.value },
+      testCases: [...testCases.value],
+      spec: props.spec,
+    }
+    emit('finish', payload)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '提交测试用例失败，请稍后重试'
+    ElMessage.error(message)
+  } finally {
+    isSubmitting.value = false
   }
-  emit('finish', payload)
 }
 </script>
 

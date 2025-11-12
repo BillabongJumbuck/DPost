@@ -96,6 +96,7 @@ function proceed() {
   gap: 12px;
 }
 .upload-box {
+  max-width: 520px;
   min-height: 140px;
   align-self: flex-start;
 }

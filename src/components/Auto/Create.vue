@@ -28,9 +28,11 @@
 import type { Component } from 'vue'
 import { computed, reactive, ref } from 'vue'
 import { Edit, Picture, Upload } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import StepRepoForm from './steps/StepRepoForm.vue'
 import StepUploadCase from './steps/StepUploadCase.vue'
 import StepSummary, { type SummaryPayload } from './steps/StepSummary.vue'
+import { forkRepository } from '@/services/auto'
 
 defineOptions({
   name: 'AutoCreate',
@@ -43,6 +45,7 @@ const emit = defineEmits<{
 const data = reactive({
   name: '',
   repoURL: '',
+  org: '',
   techStack: '',
 })
 
@@ -72,6 +75,7 @@ const steps: StepConfig[] = [
 
 const activeStep = ref(0)
 const testSpec = ref<any | null>(null)
+const isForking = ref(false)
 
 const currentComponent = computed(() => steps[activeStep.value].component)
 
@@ -79,6 +83,7 @@ const stepProps = computed(() => {
   if (activeStep.value === 0) {
     return {
       data,
+      loading: isForking.value,
     }
   }
   if (activeStep.value === 2) {
@@ -90,7 +95,30 @@ const stepProps = computed(() => {
   return {}
 })
 
-const handleNext = () => {
+const handleNext = async () => {
+  if (activeStep.value === 0) {
+    if (!data.repoURL.trim()) {
+      ElMessage.warning('请先填写 GitHub 仓库 URL')
+      return
+    }
+    if (isForking.value) return
+    isForking.value = true
+    try {
+      await forkRepository({
+        repo_url: data.repoURL.trim(),
+        org: data.org?.trim() || undefined,
+      })
+      ElMessage.success('仓库 fork 请求已提交')
+      activeStep.value += 1
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '仓库 fork 失败，请稍后重试'
+      ElMessage.error(message)
+    } finally {
+      isForking.value = false
+    }
+    return
+  }
   if (activeStep.value < steps.length - 1) {
     activeStep.value += 1
   }
@@ -106,7 +134,9 @@ const resetFlow = () => {
   activeStep.value = 0
   data.name = ''
   data.repoURL = ''
+  data.org = ''
   data.techStack = ''
+  data.org = ''
   testSpec.value = null
 }
 

@@ -19,10 +19,6 @@
           {{ repoDetails.org }} <span v-if="repoDetails.repo">/ {{ repoDetails.repo }}</span>
         </span>
       </div>
-      <div class="repo-row">
-        <span class="repo-label">仓库名称：</span>
-        <span class="repo-value">{{ repoDetails.repoName }}</span>
-      </div>
     </div>
 
     <el-card shadow="never" class="summary-section testcases-wrapper">
@@ -69,6 +65,7 @@ import { computed } from 'vue'
 type RepoInfo = {
   name?: string
   repoURL: string
+  org?: string
   techStack: string
 }
 
@@ -116,7 +113,14 @@ const repoDetails = computed<RepoDetails>(() => {
     // ignore parse errors
   }
 
-  const repoName = props.repoInfo.name?.trim() || repo || '未命名仓库'
+  const filledOrg = props.repoInfo.org?.trim()
+  if (filledOrg) {
+    org = filledOrg
+  }
+
+  const sanitizedRepo = repo.replace(/\.git$/i, '')
+  const customName = props.repoInfo.name?.trim()
+  const repoName = customName || sanitizedRepo || '未命名仓库'
 
   const frameworkLabel =
     props.repoInfo.techStack === 'springboot_maven'
@@ -130,7 +134,7 @@ const repoDetails = computed<RepoDetails>(() => {
   return {
     repoURL: repoURL || '未填写',
     org,
-    repo,
+    repo: sanitizedRepo,
     repoName,
     frameworkLabel,
   }

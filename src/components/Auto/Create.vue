@@ -30,11 +30,15 @@ import { computed, reactive, ref } from 'vue'
 import { Edit, Picture, Upload } from '@element-plus/icons-vue'
 import StepRepoForm from './steps/StepRepoForm.vue'
 import StepUploadCase from './steps/StepUploadCase.vue'
-import StepSummary from './steps/StepSummary.vue'
+import StepSummary, { type SummaryPayload } from './steps/StepSummary.vue'
 
 defineOptions({
   name: 'AutoCreate',
 })
+
+const emit = defineEmits<{
+  (event: 'created', payload: SummaryPayload): void
+}>()
 
 const data = reactive({
   name: '',
@@ -66,7 +70,7 @@ const steps: StepConfig[] = [
   },
 ]
 
-const activeStep = ref(1)
+const activeStep = ref(0)
 const testSpec = ref<any | null>(null)
 
 const currentComponent = computed(() => steps[activeStep.value].component)
@@ -75,6 +79,12 @@ const stepProps = computed(() => {
   if (activeStep.value === 0) {
     return {
       data,
+    }
+  }
+  if (activeStep.value === 2) {
+    return {
+      repoInfo: data,
+      spec: testSpec.value,
     }
   }
   return {}
@@ -92,8 +102,17 @@ const handlePrev = () => {
   }
 }
 
-const handleFinish = () => {
-  console.log('流程完成', data)
+const resetFlow = () => {
+  activeStep.value = 0
+  data.name = ''
+  data.repoURL = ''
+  data.techStack = ''
+  testSpec.value = null
+}
+
+const handleFinish = (payload: SummaryPayload) => {
+  emit('created', payload)
+  resetFlow()
 }
 
 const handleUploaded = (spec: unknown) => {

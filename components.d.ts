@@ -91,6 +91,7 @@ declare module 'vue' {
     TabHead: typeof import('./src/components/Rest/TabHead.vue')['default']
     TabRename: typeof import('./src/components/Rest/TabRename.vue')['default']
     Tabs: typeof import('./src/components/Hopp/Tabs.vue')['default']
+    UpdateDialog: typeof import('./src/components/Auto/UpdateDialog.vue')['default']
     Window: typeof import('./src/components/Hopp/Window.vue')['default']
     Windows: typeof import('./src/components/Hopp/Windows.vue')['default']
     XMLLensRenderer: typeof import('./src/components/Lenses/XMLLensRenderer.vue')['default']

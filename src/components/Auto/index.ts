@@ -1,2 +1,5 @@
 export { default as AutoCreate } from './Create.vue'
 export { default as AutoIndex } from './Index.vue'
+export { default as UpdateDialog } from './UpdateDialog.vue'
+export { useAutoConfigs } from './composables/useAutoConfigs'
+export type { CreatedConfig } from './composables/useAutoConfigs'

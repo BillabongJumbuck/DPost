@@ -147,3 +147,51 @@ export async function updateTestCase(
     throw new Error('更新测试用例失败，请稍后重试')
   }
 }
+
+export type DeleteRepositoryPayload = {
+  repo_url: string
+  org?: string
+}
+
+export type DeleteRepositoryResponse = {
+  status: 'ok'
+  message: string
+  repo_full_name: string
+  org?: string
+  fork_owner?: string
+  deleted_from?: {
+    github: boolean
+    database: boolean
+    test_case_file: boolean
+  }
+  warning?: string
+}
+
+export async function deleteRepository(
+  payload: DeleteRepositoryPayload,
+): Promise<DeleteRepositoryResponse> {
+  try {
+    const response = await fetch(buildURL('/repos'), {
+      method: 'DELETE',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(payload),
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `删除仓库失败（${response.status}）`
+      throw new Error(String(errorMessage))
+    }
+
+    return data as DeleteRepositoryResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('删除仓库失败，请稍后重试')
+  }
+}

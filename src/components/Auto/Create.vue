@@ -28,7 +28,6 @@
 import type { Component } from 'vue'
 import { computed, reactive, ref } from 'vue'
 import { Edit, Picture, Upload } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 import StepRepoForm from './steps/StepRepoForm.vue'
 import StepUploadCase from './steps/StepUploadCase.vue'
 import StepSummary, { type SummaryPayload } from './steps/StepSummary.vue'
@@ -169,7 +168,4 @@ const handleUploaded = (spec: unknown) => {
   padding: 12px 0;
 }
 
-.status-area {
-  min-height: 120px;
-}
 </style>

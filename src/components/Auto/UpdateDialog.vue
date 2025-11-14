@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile, UploadRawFile } from 'element-plus'
 import { updateTestCase } from '@/services/auto'

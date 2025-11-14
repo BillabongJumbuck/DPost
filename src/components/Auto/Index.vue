@@ -83,7 +83,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import AutoCreate from './Create.vue'
 import UpdateDialog from './UpdateDialog.vue'
 import type { SummaryPayload } from './steps/StepSummary.vue'

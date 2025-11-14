@@ -26,12 +26,7 @@
     </div>
     <template #footer>
       <el-button @click="handleClose">取消</el-button>
-      <el-button
-        type="primary"
-        :loading="isUpdating"
-        :disabled="!isValid"
-        @click="handleConfirm"
-      >
+      <el-button type="primary" :loading="isUpdating" :disabled="!isValid" @click="handleConfirm">
         确认更新
       </el-button>
     </template>
@@ -58,7 +53,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  updated: [config: CreatedConfig, updates: { spec: Record<string, unknown> | null; testCases: CreatedConfig['testCases'] }]
+  updated: [
+    config: CreatedConfig,
+    updates: { spec: Record<string, unknown> | null; testCases: CreatedConfig['testCases'] },
+  ]
 }>()
 
 const visible = computed({

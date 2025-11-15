@@ -10,9 +10,9 @@
       :on-change="handleFileChange"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">将 OpenAPI JSON 拖拽到此处，或 <em>点击上传</em></div>
+      <div class="el-upload__text">将测试用例 JSON 拖拽到此处，或 <em>点击上传</em></div>
       <template #tip>
-        <div class="el-upload__tip">仅支持 .json；需包含 openapi/swagger 与 paths 字段</div>
+        <div class="el-upload__tip">仅支持 .json；需符合测试用例格式规范（包含 tests 字段）</div>
       </template>
     </el-upload>
 
@@ -25,37 +25,46 @@
     </div>
 
     <div class="spec-info">
-      <div class="spec-title">OpenAPI 用例简介</div>
+      <div class="spec-title">测试用例格式简介</div>
       <p>
-        上传的文件需符合 OpenAPI 3.0/Swagger 2.0 规范，并至少包含
-        <code>openapi</code>/<code>swagger</code> 版本声明和
-        <code>paths</code> 节点，我们会基于这些信息生成自动化测试。
+        上传的文件需符合 API 自动化测试用例格式规范，必须包含
+        <code>tests</code> 字段（测试集数组），每个测试集包含多个测试步骤。
       </p>
       <div class="spec-example">
         <div class="spec-example-title">示例结构</div>
         <pre><code>{
-  "openapi": "3.0.1",
-  "info": {
-    "title": "Weather API",
-    "version": "1.0.0"
+  "config": {
+    "baseUrl": "http://localhost:3000",
+    "timeout": 5000
   },
-  "paths": {
-    "/weather": {
-      "get": {
-        "summary": "获取天气信息",
-        "responses": {
-          "200": {
-            "description": "成功响应"
+  "variables": {
+    "username": "alice"
+  },
+  "tests": [
+    {
+      "name": "User Workflow",
+      "steps": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "/login",
+            "body": {
+              "username": "{{username}}"
+            }
+          },
+          "expect": {
+            "status": 200
           }
         }
-      }
+      ]
     }
-  }
+  ]
 }</code></pre>
       </div>
       <ul class="spec-tips">
-        <li>推荐只上传与测试相关的子集，避免包含敏感信息。</li>
-        <li>若有多环境配置，可通过不同文件分别上传。</li>
+        <li>详细格式说明请参考 <code>src/schema/TESTCASE_FORMAT.md</code> 文档。</li>
+        <li>推荐只上传与测试相关的用例，避免包含敏感信息。</li>
         <li>解析失败时，可对照示例检查字段命名及 JSON 格式。</li>
       </ul>
     </div>
@@ -67,6 +76,8 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile, UploadRawFile } from 'element-plus'
+import { createValidator } from '@/schema/jsonSchemaValidator'
+import testCaseSchema from '@/schema/schema.json'
 
 const emit = defineEmits<{
   (event: 'next'): void
@@ -79,12 +90,27 @@ const errorMsg = ref('')
 const fileName = ref('')
 let parsedSpec: unknown = null
 
-function validateOpenAPISpec(spec: unknown): string | null {
+const validateTestCase = createValidator(testCaseSchema)
+
+function validateTestCaseFormat(spec: unknown): string | null {
   if (!spec || typeof spec !== 'object') return '文件内容不是有效的 JSON 对象'
-  const s = spec as { openapi?: unknown; swagger?: unknown; paths?: unknown }
-  const hasVersion = !!(s.openapi || s.swagger)
-  if (!hasVersion) return '缺少 openapi/swagger 字段'
-  if (!s.paths || typeof s.paths !== 'object') return '缺少 paths 字段'
+  
+  const valid = validateTestCase(spec)
+  if (!valid) {
+    const errors = validateTestCase.errors || []
+    if (errors.length > 0) {
+      const firstError = errors[0]
+      const path = firstError.instancePath || firstError.schemaPath
+      return `格式验证失败：${path} ${firstError.message || '不符合规范'}`
+    }
+    return '格式验证失败：文件不符合测试用例格式规范'
+  }
+  
+  const s = spec as { tests?: unknown }
+  if (!s.tests || !Array.isArray(s.tests) || s.tests.length === 0) {
+    return '缺少 tests 字段或 tests 为空数组'
+  }
+  
   return null
 }
 
@@ -101,7 +127,7 @@ async function handleFileChange(file: UploadFile) {
   try {
     const text = await raw.text()
     const json = JSON.parse(text)
-    const err = validateOpenAPISpec(json)
+    const err = validateTestCaseFormat(json)
     if (err) {
       errorMsg.value = err
       return
@@ -109,14 +135,18 @@ async function handleFileChange(file: UploadFile) {
     parsedSpec = json
     isValid.value = true
     ElMessage.success('用例文件校验通过')
-  } catch {
-    errorMsg.value = 'JSON 解析失败，请检查文件内容'
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      errorMsg.value = 'JSON 解析失败，请检查文件内容格式'
+    } else {
+      errorMsg.value = error instanceof Error ? error.message : '文件校验失败，请检查文件内容'
+    }
   }
 }
 
 function proceed() {
   if (!isValid.value || !parsedSpec) {
-    errorMsg.value = errorMsg.value || '请先上传并通过校验的 OpenAPI JSON 文件'
+    errorMsg.value = errorMsg.value || '请先上传并通过校验的测试用例 JSON 文件'
     return
   }
   emit('uploaded', parsedSpec)

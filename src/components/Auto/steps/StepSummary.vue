@@ -22,15 +22,28 @@
     </div>
 
     <el-card shadow="never" class="summary-section testcases-wrapper">
-      <div class="section-header">
-        <div class="section-title">
-          测试用例预览
-          <el-tag class="ml-2" size="small" type="success">总计 {{ testCases.length }} 条</el-tag>
+      <template #header>
+        <div class="card-header">
+          <div class="section-title">
+            测试用例预览
+            <el-tag class="ml-2" size="small" type="success">总计 {{ testCases.length }} 条</el-tag>
+          </div>
+          <div class="header-actions">
+            <el-button @click="emit('prev')" :disabled="isSubmitting">返回修改</el-button>
+            <el-button
+              type="primary"
+              :disabled="!testCases.length || isSubmitting"
+              :loading="isSubmitting"
+              @click="handleConfirm"
+            >
+              确认并提交
+            </el-button>
+          </div>
         </div>
-      </div>
+      </template>
       <el-empty
         v-if="!testCases.length"
-        description="未解析到有效的测试用例，请返回检查上传的 OpenAPI 文件。"
+        description="未解析到有效的测试用例，请返回检查上传的测试用例文件。"
       />
       <el-table v-else :data="testCases" border class="testcase-table">
         <el-table-column prop="method" label="方法" width="90">
@@ -38,29 +51,19 @@
             <el-tag :type="tagType(scope.row.method)">{{ scope.row.method }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="path" label="路径" min-width="220" />
-        <el-table-column prop="summary" label="概要" min-width="220">
+        <el-table-column prop="path" label="URL" min-width="220" />
+        <el-table-column prop="summary" label="步骤名称" min-width="180">
           <template #default="scope">
             <div class="summary-text">{{ scope.row.summary }}</div>
-            <div v-if="scope.row.description" class="description-text">
-              {{ scope.row.description }}
-            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="testName" label="测试集" min-width="150">
+          <template #default="scope">
+            <el-tag size="small" type="info">{{ scope.row.testName }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-
-    <div class="actions">
-      <el-button @click="emit('prev')" :disabled="isSubmitting">返回修改</el-button>
-      <el-button
-        type="primary"
-        :disabled="!testCases.length || isSubmitting"
-        :loading="isSubmitting"
-        @click="handleConfirm"
-      >
-        确认并提交
-      </el-button>
-    </div>
   </div>
 </template>
 
@@ -100,9 +103,8 @@ type TestCase = {
   path: string
   summary: string
   description?: string
+  testName: string
 }
-
-const SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE']
 
 const repoDetails = computed<RepoDetails>(() => {
   const repoURL = props.repoInfo.repoURL?.trim() || ''
@@ -150,26 +152,37 @@ const repoDetails = computed<RepoDetails>(() => {
 const testCases = computed<TestCase[]>(() => {
   const spec = props.spec
   if (!spec || typeof spec !== 'object') return []
-  const paths = (spec as Record<string, unknown>).paths
-  if (!paths || typeof paths !== 'object') return []
+  
+  const tests = (spec as { tests?: unknown }).tests
+  if (!Array.isArray(tests) || tests.length === 0) return []
 
   const list: TestCase[] = []
 
-  Object.entries(paths as Record<string, unknown>).forEach(([path, operations]) => {
-    if (!operations || typeof operations !== 'object') return
-    Object.entries(operations as Record<string, unknown>).forEach(([method, config]) => {
-      const upperMethod = method.toUpperCase()
-      if (!SUPPORTED_METHODS.includes(upperMethod)) return
-      const op = (config ?? {}) as { summary?: unknown; description?: unknown }
-      const summary =
-        (typeof op.summary === 'string' && op.summary.trim()) || '未提供概要，请检查 OpenAPI 文档'
-      const description = typeof op.description === 'string' ? op.description.trim() : undefined
+  tests.forEach((test) => {
+    if (!test || typeof test !== 'object') return
+    const testObj = test as { name?: unknown; steps?: unknown }
+    const testName = (typeof testObj.name === 'string' ? testObj.name : '未命名测试集') || '未命名测试集'
+    const steps = Array.isArray(testObj.steps) ? testObj.steps : []
+
+    steps.forEach((step, stepIndex) => {
+      if (!step || typeof step !== 'object') return
+      const stepObj = step as { name?: unknown; request?: unknown }
+      const stepName = (typeof stepObj.name === 'string' ? stepObj.name : `步骤 ${stepIndex + 1}`) || `步骤 ${stepIndex + 1}`
+      
+      const request = stepObj.request
+      if (!request || typeof request !== 'object') return
+      const req = request as { method?: unknown; url?: unknown }
+      
+      const method = typeof req.method === 'string' ? req.method.toUpperCase() : 'UNKNOWN'
+      const url = typeof req.url === 'string' ? req.url : '未指定 URL'
+      
       list.push({
-        id: `${upperMethod}-${path}`,
-        method: upperMethod,
-        path,
-        summary,
-        description,
+        id: `${testName}-${stepIndex}-${method}-${url}`,
+        method,
+        path: url,
+        summary: stepName,
+        description: `测试集：${testName}`,
+        testName,
       })
     })
   })
@@ -243,10 +256,10 @@ const handleConfirm = async () => {
 <style scoped>
 .summary-step {
   min-height: 200px;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
 }
 
 .summary-section {
@@ -260,6 +273,7 @@ const handleConfirm = async () => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background: var(--el-fill-color-light);
+  flex-shrink: 0;
 }
 
 .repo-info-header {
@@ -286,26 +300,34 @@ const handleConfirm = async () => {
   word-break: break-all;
 }
 
-.section-header {
+.card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
 }
 
 .testcases-wrapper {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .testcase-table {
   flex: 1;
-  margin-top: 12px;
+  min-height: 0;
 }
 
 .testcase-table :deep(.el-scrollbar__wrap) {
-  max-height: 320px;
+  max-height: 400px;
 }
 
 .section-title {
@@ -323,12 +345,5 @@ const handleConfirm = async () => {
   font-size: 12px;
   color: var(--el-text-color-secondary);
   margin-top: 2px;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 12px;
 }
 </style>

@@ -17,9 +17,9 @@
         :limit="1"
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">将新的 OpenAPI JSON 拖拽到此处，或 <em>点击上传</em></div>
+        <div class="el-upload__text">将新的测试用例 JSON 拖拽到此处，或 <em>点击上传</em></div>
         <template #tip>
-          <div class="el-upload__tip">仅支持 .json；需包含 openapi/swagger 与 paths 字段</div>
+          <div class="el-upload__tip">仅支持 .json；需符合测试用例格式规范（包含 tests 字段）</div>
         </template>
       </el-upload>
       <div v-if="errorMsg" class="error-text">{{ errorMsg }}</div>
@@ -35,11 +35,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadFile, UploadRawFile } from 'element-plus'
 import { updateTestCase } from '@/services/auto'
 import type { CreatedConfig } from './composables/useAutoConfigs'
-import { validateOpenAPISpec, deriveTestCasesFromSpec } from './utils/configUtils'
+import { validateTestCaseFormat, deriveTestCasesFromSpec } from './utils/configUtils'
 
 defineOptions({
   name: 'UpdateDialog',
@@ -95,15 +96,19 @@ const handleFileChange = async (uploadFile: UploadFile) => {
   try {
     const text = await raw.text()
     const json = JSON.parse(text) as Record<string, unknown>
-    const err = validateOpenAPISpec(json)
+    const err = validateTestCaseFormat(json)
     if (err) {
       errorMsg.value = err
       return
     }
     parsedSpec.value = json
     file.value = raw
-  } catch {
-    errorMsg.value = 'JSON 解析失败，请检查文件内容'
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      errorMsg.value = 'JSON 解析失败，请检查文件内容格式'
+    } else {
+      errorMsg.value = error instanceof Error ? error.message : '文件校验失败，请检查文件内容'
+    }
   }
 }
 

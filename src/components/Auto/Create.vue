@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { computed, reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { Edit, Picture, Upload } from '@element-plus/icons-vue'
 import StepRepoForm from './steps/StepRepoForm.vue'
 import StepUploadCase from './steps/StepUploadCase.vue'
@@ -146,7 +147,7 @@ const handleFinish = (payload: SummaryPayload) => {
 
 const handleUploaded = (spec: unknown) => {
   testSpec.value = spec
-  console.log('OpenAPI 规范已上传并解析', spec)
+  console.log('测试用例文件已上传并解析', spec)
 }
 </script>
 
@@ -166,6 +167,9 @@ const handleUploaded = (spec: unknown) => {
   flex: 1;
   min-height: 240px;
   padding: 12px 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

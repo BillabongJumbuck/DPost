@@ -5,6 +5,7 @@
     "stopOnFailure": false
   },
 
+  
   "variables": {
     "name1": "John Doe",
     "age1": 30,

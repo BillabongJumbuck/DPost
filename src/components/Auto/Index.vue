@@ -16,7 +16,14 @@
           <el-table-column prop="repoDetails.repoName" label="配置名称" min-width="200">
             <template #default="scope">
               <div class="repo-cell">
-                <span class="repo-name">{{ scope.row.repoDetails.repoName }}</span>
+                <el-link
+                  type="primary"
+                  class="repo-name"
+                  :underline="false"
+                  @click="showTestResults(scope.row)"
+                >
+                  {{ scope.row.repoDetails.repoName }}
+                </el-link>
                 <el-tag
                   v-if="scope.row.repoDetails.frameworkLabel"
                   size="small"
@@ -69,6 +76,13 @@
         :config="updatingConfig"
         @updated="handleUpdated"
       />
+
+      <TestResultsDialog
+        v-model="testResultsDialogVisible"
+        :loading="loadingTestResults"
+        :error="testResultsError"
+        :test-results-data="testResultsData"
+      />
     </template>
 
     <template v-else>
@@ -85,8 +99,10 @@
 import { ref } from 'vue'
 import AutoCreate from './Create.vue'
 import UpdateDialog from './UpdateDialog.vue'
+import TestResultsDialog from './TestResultsDialog.vue'
 import type { SummaryPayload } from './steps/StepSummary.vue'
-import { deleteRepository } from '@/services/auto'
+import { deleteRepository, getLatestTestResults } from '@/services/auto'
+import type { GetLatestTestResultsResponse } from '@/services/auto'
 import { useAutoConfigs } from './composables/useAutoConfigs'
 import type { CreatedConfig } from './composables/useAutoConfigs'
 import { formatDate } from './utils/configUtils'
@@ -101,6 +117,10 @@ const isCreating = ref(false)
 const updateDialogVisible = ref(false)
 const updatingConfig = ref<CreatedConfig | null>(null)
 const deletingId = ref<string | null>(null)
+const testResultsDialogVisible = ref(false)
+const loadingTestResults = ref(false)
+const testResultsError = ref<string | null>(null)
+const testResultsData = ref<GetLatestTestResultsResponse | null>(null)
 
 const startCreate = () => {
   isCreating.value = true
@@ -161,6 +181,29 @@ const handleDelete = async (config: CreatedConfig) => {
     ElMessage.error(message)
   } finally {
     deletingId.value = null
+  }
+}
+
+const showTestResults = async (config: CreatedConfig) => {
+  testResultsDialogVisible.value = true
+  loadingTestResults.value = true
+  testResultsError.value = null
+  testResultsData.value = null
+
+  try {
+    const response = await getLatestTestResults({
+      repo_url: config.repoInfo.repoURL.trim(),
+      org: config.repoInfo.org?.trim() || undefined,
+    })
+    testResultsData.value = response
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '获取测试结果失败，请稍后重试'
+    testResultsError.value = message
+    if (error instanceof Error && error.message.includes('404')) {
+      testResultsError.value = '未找到该仓库的测试结果'
+    }
+  } finally {
+    loadingTestResults.value = false
   }
 }
 </script>

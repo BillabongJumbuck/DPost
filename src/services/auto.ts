@@ -183,7 +183,7 @@ export async function deleteRepository(
     if (!response.ok) {
       const errorMessage =
         (data && typeof data === 'object' && 'message' in data && data.message) ||
-        `删除仓库失败（${response.status}）`
+        `删除仓库失败（${response.status})`
       throw new Error(String(errorMessage))
     }
 
@@ -193,5 +193,121 @@ export async function deleteRepository(
       throw error
     }
     throw new Error('删除仓库失败，请稍后重试')
+  }
+}
+
+export type TestStep = {
+  name: string
+  success: boolean
+  error: string | null
+  response: {
+    status: number
+    headers: Record<string, string>
+    body: unknown
+    rawBody: string
+  }
+}
+
+export type TestCase = {
+  name: string
+  steps: TestStep[]
+  passed: boolean
+}
+
+export type TestResults = {
+  testCaseFile: string
+  config: Record<string, unknown>
+  total: number
+  passed: number
+  failed: number
+  successRate: number
+  timestamp: string
+  tests: TestCase[]
+}
+
+export type TestResult = {
+  repo_url: string
+  repo_full_name: string
+  org?: string
+  workflow_run_id: string
+  workflow_run_url: string
+  received_at: string
+  test_results: TestResults
+}
+
+export type GetLatestTestResultsPayload = {
+  repo_url: string
+  org?: string
+}
+
+export type GetLatestTestResultsResponse = {
+  status: 'ok'
+  filename: string
+  data: TestResult
+}
+
+export async function getLatestTestResults(
+  payload: GetLatestTestResultsPayload,
+): Promise<GetLatestTestResultsResponse> {
+  try {
+    const params = new URLSearchParams()
+    params.append('repo_url', payload.repo_url)
+    if (payload.org) {
+      params.append('org', payload.org)
+    }
+
+    const response = await fetch(buildURL(`/repos/test-results?${params.toString()}`), {
+      method: 'GET',
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `获取测试结果失败（${response.status}）`
+      throw new Error(String(errorMessage))
+    }
+
+    return data as GetLatestTestResultsResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('获取测试结果失败，请稍后重试')
+  }
+}
+
+export type GetTestResultByFilenameResponse = {
+  status: 'ok'
+  filename: string
+  data: TestResult
+}
+
+export async function getTestResultByFilename(
+  filename: string,
+): Promise<GetTestResultByFilenameResponse> {
+  try {
+    const response = await fetch(buildURL(`/repos/test-results/${encodeURIComponent(filename)}`), {
+      method: 'GET',
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `获取测试结果失败（${response.status}）`
+      throw new Error(String(errorMessage))
+    }
+
+    return data as GetTestResultByFilenameResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('获取测试结果失败，请稍后重试')
   }
 }

@@ -4,16 +4,17 @@
     title="测试结果"
     width="90%"
     :close-on-click-modal="false"
+    class="test-results-dialog"
     @close="handleClose"
   >
-    <div v-if="loading" class="test-results-loading">
+    <div v-if="loading" class="test-results-loading scrollable-content">
       <el-icon class="is-loading"><Loading /></el-icon>
       <span>加载中...</span>
     </div>
-    <div v-else-if="error" class="test-results-error">
+    <div v-else-if="error" class="test-results-error scrollable-content">
       <el-alert :title="error" type="error" :closable="false" />
     </div>
-    <div v-else-if="testResultsData" class="test-results-content">
+    <div v-else-if="testResultsData" class="test-results-content scrollable-content">
       <!-- 头部信息 -->
       <div class="test-results-header">
         <div class="header-item">
@@ -249,8 +250,8 @@ const getStatusTagType = (status: number): 'success' | 'warning' | 'danger' | 'i
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 40px;
   color: var(--el-text-color-secondary);
+  min-height: 200px;
 }
 
 .test-results-error {
@@ -258,7 +259,7 @@ const getStatusTagType = (status: number): 'success' | 'warning' | 'danger' | 'i
 }
 
 .test-results-content {
-  padding: 0;
+  /* padding 由 scrollable-content 类提供 */
 }
 
 .test-results-header {
@@ -445,6 +446,49 @@ const getStatusTagType = (status: number): 'success' | 'warning' | 'danger' | 'i
   color: var(--el-text-color-primary);
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+/* 固定对话框头部 */
+.test-results-dialog :deep(.el-dialog__header) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
+  padding: 20px 20px 16px;
+  margin: 0;
+}
+
+.test-results-dialog :deep(.el-dialog__body) {
+  padding: 0;
+  max-height: calc(90vh - 80px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  max-height: calc(90vh - 80px);
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: var(--el-bg-color-page);
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: var(--el-border-color);
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: var(--el-border-color-darker);
 }
 </style>
 

@@ -3,9 +3,9 @@
     <template #primary>
       <RestMain ref="restMainRef" class="h-full w-full p-0 m-0" v-model:current-tab="currentTab" />
     </template>
-    <template #secondary>
+    <!-- <template #secondary>
       <RestSidebar :current-tab="currentTab" @create-new-tab="handleCreateNewTab" />
-    </template>
+    </template> -->
   </MainLayout>
 </template>
 

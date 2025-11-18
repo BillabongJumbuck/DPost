@@ -196,6 +196,50 @@ export async function deleteRepository(
   }
 }
 
+export type SyncUpstreamPayload = {
+  repo_url: string
+  org?: string
+  branch?: string
+}
+
+export type SyncUpstreamResponse = unknown
+
+export async function syncUpstream(
+  payload: SyncUpstreamPayload,
+): Promise<SyncUpstreamResponse> {
+  try {
+    const response = await fetch(buildURL('/repos/sync-upstream'), {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify({
+        repo_url: payload.repo_url,
+        org: payload.org,
+        branch: payload.branch || 'main',
+      }),
+    })
+
+    const text = await response.text()
+    const data = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const errorMessage =
+        (data && typeof data === 'object' && 'message' in data && data.message) ||
+        `同步 fork 失败（${response.status}）`
+      const err = new Error(String(errorMessage))
+      // Attach status for caller convenience
+      ;(err as any).status = response.status
+      throw err
+    }
+
+    return data as SyncUpstreamResponse
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('同步 fork 失败，请稍后重试')
+  }
+}
+
 export type TestStep = {
   name: string
   success: boolean

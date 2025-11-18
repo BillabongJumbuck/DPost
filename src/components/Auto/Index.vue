@@ -59,6 +59,15 @@
               </el-button>
               <el-button
                 link
+                type="info"
+                size="small"
+                :loading="syncingId === scope.row.id"
+                @click="handleSync(scope.row)"
+              >
+                刷新
+              </el-button>
+              <el-button
+                link
                 type="danger"
                 size="small"
                 :loading="deletingId === scope.row.id"
@@ -101,8 +110,9 @@ import AutoCreate from './Create.vue'
 import UpdateDialog from './UpdateDialog.vue'
 import TestResultsDialog from './TestResultsDialog.vue'
 import type { SummaryPayload } from './steps/StepSummary.vue'
-import { deleteRepository, getLatestTestResults } from '@/services/auto'
+import { deleteRepository, getLatestTestResults, syncUpstream } from '@/services/auto'
 import type { GetLatestTestResultsResponse } from '@/services/auto'
+import type { SyncUpstreamPayload } from '@/services/auto'
 import { useAutoConfigs } from './composables/useAutoConfigs'
 import type { CreatedConfig } from './composables/useAutoConfigs'
 import { formatDate } from './utils/configUtils'
@@ -117,6 +127,7 @@ const isCreating = ref(false)
 const updateDialogVisible = ref(false)
 const updatingConfig = ref<CreatedConfig | null>(null)
 const deletingId = ref<string | null>(null)
+const syncingId = ref<string | null>(null)
 const testResultsDialogVisible = ref(false)
 const loadingTestResults = ref(false)
 const testResultsError = ref<string | null>(null)
@@ -181,6 +192,31 @@ const handleDelete = async (config: CreatedConfig) => {
     ElMessage.error(message)
   } finally {
     deletingId.value = null
+  }
+}
+
+const handleSync = async (config: CreatedConfig) => {
+  if (syncingId.value) return
+  syncingId.value = config.id
+
+  try {
+    const payload: SyncUpstreamPayload = {
+      repo_url: config.repoInfo.repoURL.trim(),
+      org: config.repoInfo.org?.trim() || undefined,
+      branch: 'main',
+    }
+
+    const res = await syncUpstream(payload)
+    // GitHub may return 200 or 202. Show a friendly message.
+    if (res && typeof res === 'object' && 'status' in (res as any)) {
+      // if backend passes status through, handle it; otherwise just show success
+    }
+    ElMessage.success('已发起同步请求（请查看 GitHub 或稍后刷新）')
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '同步失败，请稍后重试'
+    ElMessage.error(message)
+  } finally {
+    syncingId.value = null
   }
 }
 
